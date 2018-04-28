@@ -22,7 +22,7 @@ public class WordAlignmentModel {
     }
 
     public void runWordAligmentProcess() {
-        String [] args = new String[42];
+        String [] args = new String[44];
         args[0] = "-Main.forwardModels";
         args[1] = "MODEL1";
         args[2] = "HMM";
@@ -65,11 +65,13 @@ public class WordAlignmentModel {
         args[39] = "0";
         args[40] = "-Main.competitiveThresholding";
         args[41] = "true";
+        args[42] = "-exec.overwriteExecDir";
+        args[43] = "true";
 
         Main.main(args);
     }
 
-    public void printAllOptions() {
+    public static void printAllOptions() {
         String [] args = new String[] {"-help"};
         Main.main(args);
     }

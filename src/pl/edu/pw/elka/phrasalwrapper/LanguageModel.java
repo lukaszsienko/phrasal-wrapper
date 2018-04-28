@@ -36,8 +36,15 @@ public class LanguageModel {
 
             String textModelFileName = modelFileName+".arpa";
             String textModelPath = outputFolder+"/"+textModelFileName;
+            String chmodCommand = "chmod +x "+dest.getAbsolutePath()+"/kenlm/bin/lmplz"+" "+dest.getAbsolutePath()+"/kenlm/bin/build_binary";
             String buildCommand = dest.getAbsolutePath()+"/kenlm/bin/lmplz -o " + ngram + " < " + englishSideOfCorpusFilePath + " > "+textModelPath;
-            Process buildTextModel = runtime.exec(buildCommand);
+
+            Process chmodProcess = runtime.exec(chmodCommand);
+            chmodProcess.waitFor();
+            System.err.println("Exit chmod status=" + chmodProcess.exitValue());
+
+            String[] build_cmd = {"/bin/sh","-c",buildCommand};
+            Process buildTextModel = runtime.exec(build_cmd);
             buildTextModel.waitFor();
 
             System.err.println("Exit build status=" + buildTextModel.exitValue());
