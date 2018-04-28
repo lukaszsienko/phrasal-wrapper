@@ -2,6 +2,8 @@ package pl.edu.pw.elka.phrasalwrapper;
 
 import edu.berkeley.nlp.wordAlignment.Main;
 
+import java.io.File;
+
 /**
  * Created by lsienko on 26.04.18.
  */
@@ -13,8 +15,8 @@ public class WordAlignmentModel {
     private String foreignFileNameSuffix;
 
     public WordAlignmentModel(ParallerCorpus parallerCorpus) {
-        this.inputFolder = parallerCorpus.getPathToFolder();
-        this.outputFolder = parallerCorpus.getPathToFolder()+"/output";
+        this.inputFolder = new File(parallerCorpus.getEnglishFilePath()).getParent();
+        this.outputFolder = parallerCorpus.getPathToModelsFolder();
         this.englishFileNameSuffix = parallerCorpus.getEnglishFileNameSuffix();
         this.foreignFileNameSuffix = parallerCorpus.getForeignFileNameSuffix();
     }

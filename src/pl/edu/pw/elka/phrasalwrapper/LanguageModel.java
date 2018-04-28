@@ -11,14 +11,14 @@ public class LanguageModel {
 
     private String ngram;
     private String englishSideOfCorpusFilePath;
-    private String outputFolder;
     private String modelFileName;
+    private String outputFolder;
 
     public LanguageModel(int ngram, ParallerCorpus parallerCorpus) {
         this.ngram = String.valueOf(ngram);
         this.englishSideOfCorpusFilePath = parallerCorpus.getEnglishFilePath();
-        this.outputFolder = parallerCorpus.getPathToFolder();
         this.modelFileName = this.ngram + "gm";
+        this.outputFolder = parallerCorpus.getPathToModelsFolder();
     }
 
     public String getModelBinaryFileName() {
