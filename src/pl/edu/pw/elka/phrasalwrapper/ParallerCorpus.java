@@ -49,7 +49,10 @@ public class ParallerCorpus {
         }
 
         pathToModelsFolder = englishCorpusSideFile.getParent() + "/models";
-        new File(pathToModelsFolder).mkdir();
+        File modelsDir = new File(pathToModelsFolder);
+        if (!modelsDir.exists()) {
+            modelsDir.mkdir();
+        }
     }
 
     private void renameFile(String absoluteFilePath, String newName) throws IOException {
@@ -77,7 +80,7 @@ public class ParallerCorpus {
         return pathToModelsFolder;
     }
 
-    public void tokenize() throws IOException, InterruptedException {
+    public void tokenize() throws Exception {
         File srcTokFile = new File(getClass().getResource("/tokenizer/tokenizer.perl").getPath());
         File srcLowFile = new File(getClass().getResource("/tokenizer/lowercase.perl").getPath());
         File prefixFile = new File(getClass().getResource("/tokenizer/nonbreaking_prefixes/nonbreaking_prefix.en").getPath());
@@ -102,21 +105,24 @@ public class ParallerCorpus {
         String englishCmd = "cat" + " " + this.englishCorpusSideFile.getAbsolutePath() + " | " + dstTokFile.getAbsolutePath() + " -l " + "en" + " | " + dstLowFile.getAbsolutePath() + " > " + outputEnglishFilePath;
         String foreignCmd = "cat" + " " + this.foreignCorpusSideFile.getAbsolutePath() + " | " + dstTokFile.getAbsolutePath() + " -l " + "en" + " | " + dstLowFile.getAbsolutePath() + " > " + outputForeignFilePath;
 
-        System.err.println(englishCmd);
-        System.err.println(foreignCmd);
-
         Runtime runtime = Runtime.getRuntime();
-
-
 
         String[] eng_cmd = {"/bin/sh","-c",englishCmd};
         String[] for_cmd = {"/bin/sh","-c",foreignCmd};
-
         Process engProcess = runtime.exec(eng_cmd);
         Process forProcess = runtime.exec(for_cmd);
 
         engProcess.waitFor();
         forProcess.waitFor();
+
+        if (engProcess.exitValue() != 0) {
+            throw new Exception("English-corpus side tokenization exception, command did not return 0.");
+        }
+        if (forProcess.exitValue() != 0) {
+            throw new Exception("Foreign-corpus side tokenization exception, command did not return 0.");
+        }
+
+
 
 
         //TODO remove debug information output
@@ -140,15 +146,12 @@ public class ParallerCorpus {
             System.out.println(s);
         }
 //////////////////////////////////
-
-
-
-
-
-
-
-
+        //TODO remove debug information output END
         System.err.println("Exit status=" + engProcess.exitValue());
+
+
+
+
 
         dstTokFile.delete();
         dstLowFile.delete();

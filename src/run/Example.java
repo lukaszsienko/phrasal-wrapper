@@ -14,7 +14,7 @@ public class Example {
         //corpus.tokenize();
 
         //WordAlignmentModel alignmentModel = new WordAlignmentModel(corpus);
-        //alignmentModel.runWordAligmentProcess();
+        //alignmentModel.runWordAlignmentProcess();
 
         LanguageModel languageModel = new LanguageModel(5, corpus);
         languageModel.buildLanguageModel();

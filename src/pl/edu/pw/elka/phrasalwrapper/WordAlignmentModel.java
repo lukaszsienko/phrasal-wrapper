@@ -21,7 +21,7 @@ public class WordAlignmentModel {
         this.foreignFileNameSuffix = parallerCorpus.getForeignFileNameSuffix();
     }
 
-    public void runWordAligmentProcess() {
+    public void runWordAlignmentProcess() {
         String [] args = new String[44];
         args[0] = "-Main.forwardModels";
         args[1] = "MODEL1";

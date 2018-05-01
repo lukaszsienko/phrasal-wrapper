@@ -31,7 +31,7 @@ public class Decoder {
             File phrase_table_file = new File(translationModel.getPath() + "/phrase-table.gz");
             String phrase_table_file_path = phrase_table_file.getAbsolutePath();
 
-            File lang_model_file = new File(languageModel.getOutputFolder()+"/"+languageModel.getModelBinaryFileName());
+            File lang_model_file = new File(""/*languageModel.getOutputFolder()+"/"+languageModel.getModelBinaryFileName()*/);
             String lang_model_file_path = lang_model_file.getAbsolutePath();
 
             File toTranslate = new File(fileToTranslatePath);

@@ -29,39 +29,39 @@ public class LanguageModel {
         try {
             File src = new File(getClass().getResource("/kenLanguageModel").getPath());
             File dest = new File(outputFolder+"/kenLanguageModel");
-
             FileUtils.copyDirectory(src, dest);
-
-            Runtime runtime = Runtime.getRuntime();
 
             String textModelFileName = modelFileName+".arpa";
             String textModelPath = outputFolder+"/"+textModelFileName;
+
             String chmodCommand = "chmod +x "+dest.getAbsolutePath()+"/kenlm/bin/lmplz"+" "+dest.getAbsolutePath()+"/kenlm/bin/build_binary";
             String buildCommand = dest.getAbsolutePath()+"/kenlm/bin/lmplz -o " + ngram + " < " + englishSideOfCorpusFilePath + " > "+textModelPath;
+            String transferCommand = dest.getAbsolutePath()+"/kenlm/bin/build_binary trie "+outputFolder+"/"+textModelFileName+" "+outputFolder+"/"+getModelBinaryFileName();
 
+            Runtime runtime = Runtime.getRuntime();
             Process chmodProcess = runtime.exec(chmodCommand);
             chmodProcess.waitFor();
-            System.err.println("Exit chmod status=" + chmodProcess.exitValue());
+            if (chmodProcess.exitValue() != 0) {
+                throw new Exception("Language model building exception, chmod command did not return 0.");
+            }
 
-            String[] build_cmd = {"/bin/sh","-c",buildCommand};
+            String[] build_cmd = {"/bin/sh","-c", buildCommand};
             Process buildTextModel = runtime.exec(build_cmd);
             buildTextModel.waitFor();
+            if (buildTextModel.exitValue() != 0) {
+                throw new Exception("Language model building exception, build command did not return 0.");
+            }
 
-            System.err.println("Exit build status=" + buildTextModel.exitValue());
-
-            String transferCommand = dest.getAbsolutePath()+"/kenlm/bin/build_binary trie "+outputFolder+" "+getModelBinaryFileName();
             Process transferToBinaryModel = runtime.exec(transferCommand);
             transferToBinaryModel.waitFor();
-
-            System.err.println("Exit transfer status=" + transferToBinaryModel.exitValue());
+            if (transferToBinaryModel.exitValue() != 0) {
+                throw new Exception("Language model building exception, transfer command did not return 0.");
+            }
 
             FileUtils.deleteDirectory(dest);
+
         } catch (Throwable t) {
             t.printStackTrace();
         }
-    }
-
-    public String getOutputFolder() {
-        return outputFolder;
     }
 }
