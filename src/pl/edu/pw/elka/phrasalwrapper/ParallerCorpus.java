@@ -81,9 +81,9 @@ public class ParallerCorpus {
     }
 
     public void tokenize() throws Exception {
-        File srcTokFile = new File(getClass().getResource("/tokenizer/tokenizer.perl").getPath());
-        File srcLowFile = new File(getClass().getResource("/tokenizer/lowercase.perl").getPath());
-        File prefixFile = new File(getClass().getResource("/tokenizer/nonbreaking_prefixes/nonbreaking_prefix.en").getPath());
+        Path srcTokFilePath = Utilities.getResourcePath("/tokenizer/tokenizer.perl");
+        Path srcLowFilePath = Utilities.getResourcePath("/tokenizer/lowercase.perl");
+        Path prefixFilePath = Utilities.getResourcePath("/tokenizer/nonbreaking_prefixes/nonbreaking_prefix.en");
 
         File dstTokFile = new File(this.englishCorpusSideFile.getParent() + "/tokenizer.perl");
         File dstLowFile = new File(this.englishCorpusSideFile.getParent() + "/lowercase.perl");
@@ -94,10 +94,10 @@ public class ParallerCorpus {
         dstLowFile.delete();
         dstPrefixesFile.delete();
         dstPrefixesDir.delete();
-        Files.copy(srcTokFile.toPath(), dstTokFile.toPath());
-        Files.copy(srcLowFile.toPath(), dstLowFile.toPath());
+        Files.copy(srcTokFilePath, dstTokFile.toPath());
+        Files.copy(srcLowFilePath, dstLowFile.toPath());
         dstPrefixesDir.mkdir();
-        Files.copy(prefixFile.toPath(), dstPrefixesFile.toPath());
+        Files.copy(prefixFilePath, dstPrefixesFile.toPath());
 
         String englishCorpusSideFileName = englishCorpusSideFile.getName();
         String foreignCorpusSideFileName = foreignCorpusSideFile.getName();

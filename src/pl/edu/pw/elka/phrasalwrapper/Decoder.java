@@ -8,6 +8,7 @@ import edu.stanford.nlp.util.StringUtils;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.*;
 
@@ -43,10 +44,10 @@ public class Decoder {
         this.languageModelFilePath = langModelFile.getAbsolutePath();
 
         try {
-            File src_ini_file = new File(getClass().getResource("/phrasal.ini").getPath());
-            File dst_ini_file = new File(translationModel.getOutputFolder()+"/phrasal.ini");
-            Files.copy(src_ini_file.toPath(), dst_ini_file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            this.iniFilePath = dst_ini_file.getAbsolutePath();
+            Path iniFilePath = Utilities.getResourcePath("/phrasal.ini");
+            File dstIniFile = new File(translationModel.getOutputFolder()+"/phrasal.ini");
+            Files.copy(iniFilePath, dstIniFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            this.iniFilePath = dstIniFile.getAbsolutePath();
         } catch (IOException exp) {
             exp.printStackTrace();
         }

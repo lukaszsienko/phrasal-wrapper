@@ -72,21 +72,23 @@ public class LanguageModel {
     }
 
     public File extractAndLoadKenLMLibrary() throws Exception {
-        File src = new File(getClass().getResource("/kenLanguageModel").getPath());
         File dest = new File(outputFolder+"/kenLanguageModel");
         if (dest.exists()) {
             FileUtils.deleteDirectory(dest);
         }
-        FileUtils.copyDirectory(src, dest);
+        Utilities.extractDirectory("/kenLanguageModel", dest.getParent());
+
         loadLibrary(dest.getAbsolutePath());
         return dest;
     }
 
     @Deprecated
     private void loadLibrary(String libraryAbsolutePath) throws Exception {
-        System.setProperty("java.library.path", System.getProperty("java.library.path")+":"+libraryAbsolutePath);
-        Field fieldSysPath = ClassLoader.class.getDeclaredField( "sys_paths" );
-        fieldSysPath.setAccessible( true );
-        fieldSysPath.set( null, null );
+        if (!System.getProperty("java.library.path").contains(libraryAbsolutePath)) {
+            System.setProperty("java.library.path", System.getProperty("java.library.path")+":"+libraryAbsolutePath);
+            Field fieldSysPath = ClassLoader.class.getDeclaredField( "sys_paths" );
+            fieldSysPath.setAccessible( true );
+            fieldSysPath.set( null, null );
+        }
     }
 }
