@@ -10,21 +10,22 @@ import java.io.File;
 public class TranslationModel {
 
     private WordAlignmentModel alignmentModel;
-    private String path; //TODO calculate
+    private String outputFolder;
 
-    public TranslationModel(WordAlignmentModel alignmentModel) {
+    public TranslationModel(WordAlignmentModel alignmentModel, ParallerCorpus corpus) {
         this.alignmentModel = alignmentModel;
+        this.outputFolder = corpus.getPathToModelsFolder();
     }
 
-    public String getPath() {
-        return path;
+    public String getOutputFolder() {
+        return outputFolder;
     }
 
     public void buildTranslationModel() {
         File berkeley_aligner_folder = new File(alignmentModel.getOutputFolder());
         String aligner_folder_path = berkeley_aligner_folder.getAbsolutePath();
 
-        File translation_model_folder = new File(path);
+        File translation_model_folder = new File(outputFolder);
         String translation_model_path = translation_model_folder.getAbsolutePath();
 
         String[] phrase_extract_args = new String[18];
@@ -53,8 +54,8 @@ public class TranslationModel {
             PhraseExtract.main(phrase_extract_args);
         } catch (Exception e) {
             e.printStackTrace();
+            System.err.println("\nCheck if you've built word aligment model by calling WordAlignmentModel.runWordAlignmentProcess() method before.");
         }
-
 
     }
 }

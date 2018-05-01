@@ -25,6 +25,10 @@ public class LanguageModel {
         return modelFileName + ".bin";
     }
 
+    public String getOutputFolder() {
+        return outputFolder;
+    }
+
     public void buildLanguageModel() {
         try {
             File src = new File(getClass().getResource("/kenLanguageModel").getPath());

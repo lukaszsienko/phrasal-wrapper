@@ -1,5 +1,6 @@
 package run;
 
+import edu.stanford.nlp.mt.Phrasal;
 import pl.edu.pw.elka.phrasalwrapper.*;
 
 /**
@@ -13,20 +14,21 @@ public class Example {
                 "/home/lsienko/Pobrane/test/europarl-v7.pl-en.pl.tok.pl");
         //corpus.tokenize();
 
-        //WordAlignmentModel alignmentModel = new WordAlignmentModel(corpus);
+        WordAlignmentModel alignmentModel = new WordAlignmentModel(corpus);
         //alignmentModel.runWordAlignmentProcess();
 
         LanguageModel languageModel = new LanguageModel(5, corpus);
-        languageModel.buildLanguageModel();
+        //languageModel.buildLanguageModel();
 
-        /*TranslationModel translationModel = new TranslationModel(alignmentModel);
+        TranslationModel translationModel = new TranslationModel(alignmentModel, corpus);
         translationModel.buildTranslationModel();
 
         Decoder decoder = new Decoder(languageModel, translationModel);
-        decoder.runDecoding(fileToTranslatePath);*/
+        decoder.runConsoleInteractiveModeDecoding();
     }
 
     public static void main(String[] args) throws Exception {
+        //Phrasal.main(new String[] {"-help"});
         exampleUseCase();
     }
 }
