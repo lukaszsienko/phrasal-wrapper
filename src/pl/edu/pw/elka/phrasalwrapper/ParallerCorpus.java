@@ -122,37 +122,6 @@ public class ParallerCorpus {
             throw new Exception("Foreign-corpus side tokenization exception, command did not return 0.");
         }
 
-
-
-
-        //TODO remove debug information output
-//////////////////////////////////
-        BufferedReader stdInput = new BufferedReader(new
-                InputStreamReader(engProcess.getInputStream()));
-
-        BufferedReader stdError = new BufferedReader(new
-                InputStreamReader(engProcess.getErrorStream()));
-
-// read the output from the command
-        System.out.println("Here is the standard output of the command:\n");
-        String s = null;
-        while ((s = stdInput.readLine()) != null) {
-            System.out.println(s);
-        }
-
-// read any errors from the attempted command
-        System.out.println("Here is the standard error of the command (if any):\n");
-        while ((s = stdError.readLine()) != null) {
-            System.out.println(s);
-        }
-//////////////////////////////////
-        //TODO remove debug information output END
-        System.err.println("Exit status=" + engProcess.exitValue());
-
-
-
-
-
         dstTokFile.delete();
         dstLowFile.delete();
         dstPrefixesFile.delete();
