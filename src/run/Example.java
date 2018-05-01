@@ -34,7 +34,6 @@ public class Example {
 
 
 /**
- *         //TODO remove debug information output
  * //////////////////////////////////
  *         BufferedReader stdInput = new BufferedReader(new
  *                 InputStreamReader(engProcess.getInputStream()));
@@ -55,7 +54,6 @@ public class Example {
  *             System.out.println(s);
  *         }
  * //////////////////////////////////
- *         //TODO remove debug information output END
  *         System.err.println("Exit status=" + engProcess.exitValue());
  */
 

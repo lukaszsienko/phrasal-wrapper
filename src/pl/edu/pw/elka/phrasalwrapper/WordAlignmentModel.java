@@ -1,8 +1,10 @@
 package pl.edu.pw.elka.phrasalwrapper;
 
 import edu.berkeley.nlp.wordAlignment.Main;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by lsienko on 26.04.18.
@@ -16,12 +18,18 @@ public class WordAlignmentModel {
 
     public WordAlignmentModel(ParallerCorpus parallerCorpus) {
         this.inputFolder = new File(parallerCorpus.getEnglishFilePath()).getParent();
-        this.outputFolder = parallerCorpus.getPathToModelsFolder();
+        this.outputFolder = parallerCorpus.getPathToModelsFolder()+"/aligner_output";
         this.englishFileNameSuffix = parallerCorpus.getEnglishFileNameSuffix();
         this.foreignFileNameSuffix = parallerCorpus.getForeignFileNameSuffix();
     }
 
-    public void runWordAlignmentProcess() {
+    public void runWordAlignmentProcess() throws IOException {
+        File outputDirectory = new File(this.outputFolder);
+        if (outputDirectory.exists()) {
+            FileUtils.deleteDirectory(outputDirectory);
+        }
+        outputDirectory.mkdir();
+
         String [] args = new String[44];
         args[0] = "-Main.forwardModels";
         args[1] = "MODEL1";
@@ -36,7 +44,7 @@ public class WordAlignmentModel {
         args[10] = "2";
         args[11] = "2";
         args[12] = "-exec.execDir";
-        args[13] = outputFolder;
+        args[13] = outputDirectory.getAbsolutePath();
         args[14] = "-exec.create";
         args[15] = "true";
         args[16] = "-Main.saveParams";

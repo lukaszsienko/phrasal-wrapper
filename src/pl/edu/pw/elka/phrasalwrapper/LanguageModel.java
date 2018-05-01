@@ -18,7 +18,7 @@ public class LanguageModel {
         this.ngram = String.valueOf(ngram);
         this.englishSideOfCorpusFilePath = parallerCorpus.getEnglishFilePath();
         this.modelFileName = this.ngram + "gm";
-        this.outputFolder = parallerCorpus.getPathToModelsFolder();
+        this.outputFolder = parallerCorpus.getPathToModelsFolder()+"/language_model";
     }
 
     public String getModelBinaryFileName() {
@@ -31,6 +31,12 @@ public class LanguageModel {
 
     public void buildLanguageModel() {
         try {
+            File outputDirectory = new File(this.outputFolder);
+            if (outputDirectory.exists()) {
+                FileUtils.deleteDirectory(outputDirectory);
+            }
+            outputDirectory.mkdir();
+
             File src = new File(getClass().getResource("/kenLanguageModel").getPath());
             File dest = new File(outputFolder+"/kenLanguageModel");
             FileUtils.copyDirectory(src, dest);

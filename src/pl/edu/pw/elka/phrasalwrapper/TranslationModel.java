@@ -1,8 +1,10 @@
 package pl.edu.pw.elka.phrasalwrapper;
 
 import edu.stanford.nlp.mt.train.PhraseExtract;
+import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Created by lsienko on 26.04.18.
@@ -14,14 +16,20 @@ public class TranslationModel {
 
     public TranslationModel(WordAlignmentModel alignmentModel, ParallerCorpus corpus) {
         this.alignmentModel = alignmentModel;
-        this.outputFolder = corpus.getPathToModelsFolder();
+        this.outputFolder = corpus.getPathToModelsFolder() + "/translation_model";
     }
 
     public String getOutputFolder() {
         return outputFolder;
     }
 
-    public void buildTranslationModel() {
+    public void buildTranslationModel() throws IOException {
+        File outputDirectory = new File(this.outputFolder);
+        if (outputDirectory.exists()) {
+            FileUtils.deleteDirectory(outputDirectory);
+        }
+        outputDirectory.mkdir();
+
         File berkeley_aligner_folder = new File(alignmentModel.getOutputFolder());
         String aligner_folder_path = berkeley_aligner_folder.getAbsolutePath();
 

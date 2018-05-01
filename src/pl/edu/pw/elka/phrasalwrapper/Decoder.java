@@ -25,7 +25,7 @@ public class Decoder {
         if (!phraseTableFile.exists()) {
             System.err.println("\nCheck if you've built translation model by calling TranslationModel.buildTranslationModel() method before.");
         }
-        File reorderingModelFile = new File(translationModel.getOutputFolder() + "lo-hier.msd2-bidirectional-fe.gz");
+        File reorderingModelFile = new File(translationModel.getOutputFolder() + "/lo-hier.msd2-bidirectional-fe.gz");
         if (!reorderingModelFile.exists()) {
             System.err.println("\nCheck if you've built translation model by calling TranslationModel.buildTranslationModel() method before.");
         }
