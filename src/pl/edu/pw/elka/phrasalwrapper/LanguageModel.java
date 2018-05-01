@@ -3,6 +3,7 @@ package pl.edu.pw.elka.phrasalwrapper;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
+import java.lang.reflect.Field;
 
 /**
  * Created by lsienko on 26.04.18.
@@ -37,9 +38,7 @@ public class LanguageModel {
             }
             outputDirectory.mkdir();
 
-            File src = new File(getClass().getResource("/kenLanguageModel").getPath());
-            File dest = new File(outputFolder+"/kenLanguageModel");
-            FileUtils.copyDirectory(src, dest);
+            File dest = extractAndLoadKenLMLibrary();
 
             String textModelFileName = modelFileName+".arpa";
             String textModelPath = outputFolder+"/"+textModelFileName;
@@ -67,11 +66,27 @@ public class LanguageModel {
             if (transferToBinaryModel.exitValue() != 0) {
                 throw new Exception("Language model building exception, transfer command did not return 0.");
             }
-
-            FileUtils.deleteDirectory(dest);
-
         } catch (Throwable t) {
             t.printStackTrace();
         }
+    }
+
+    public File extractAndLoadKenLMLibrary() throws Exception {
+        File src = new File(getClass().getResource("/kenLanguageModel").getPath());
+        File dest = new File(outputFolder+"/kenLanguageModel");
+        if (dest.exists()) {
+            FileUtils.deleteDirectory(dest);
+        }
+        FileUtils.copyDirectory(src, dest);
+        loadLibrary(dest.getAbsolutePath());
+        return dest;
+    }
+
+    @Deprecated
+    private void loadLibrary(String libraryAbsolutePath) throws Exception {
+        System.setProperty("java.library.path", System.getProperty("java.library.path")+":"+libraryAbsolutePath);
+        Field fieldSysPath = ClassLoader.class.getDeclaredField( "sys_paths" );
+        fieldSysPath.setAccessible( true );
+        fieldSysPath.set( null, null );
     }
 }

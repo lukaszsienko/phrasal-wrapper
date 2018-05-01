@@ -27,11 +27,11 @@ public class ParallerCorpus {
 
         this.englishCorpusSideFile = new File(englishFilePath);
         if (this.englishCorpusSideFile.exists() == false) {
-            throw new FileNotFoundException("Cannot find the file of English-side paraller corpus at specified path.");
+            throw new FileNotFoundException("Cannot find the file of English-side paraller corpus at specified path. Check file name (might have been changed to cover the requirements).");
         }
         this.foreignCorpusSideFile = new File(foreignFilePath);
         if (this.foreignCorpusSideFile.exists() == false) {
-            throw new FileNotFoundException("Cannot find the file of foreign-side paraller corpus at specified path.");
+            throw new FileNotFoundException("Cannot find the file of foreign-side paraller corpus at specified path. Check file name (might have been changed to cover the requirements).");
         }
 
         // Detect files suffixes. Add suffixes when no suffix detected.
@@ -99,8 +99,11 @@ public class ParallerCorpus {
         dstPrefixesDir.mkdir();
         Files.copy(prefixFile.toPath(), dstPrefixesFile.toPath());
 
-        String outputEnglishFilePath = englishCorpusSideFile.getParent() + "/" + englishCorpusSideFile.getName() + ".tok" + "." + englishFileNameSuffix;
-        String outputForeignFilePath = foreignCorpusSideFile.getParent() + "/" + foreignCorpusSideFile.getName() + ".tok" + "." + foreignFileNameSuffix;
+        String englishCorpusSideFileName = englishCorpusSideFile.getName();
+        String foreignCorpusSideFileName = foreignCorpusSideFile.getName();
+
+        String outputEnglishFilePath = englishCorpusSideFile.getParent() + "/" + englishCorpusSideFileName + ".tok" + "." + englishFileNameSuffix;
+        String outputForeignFilePath = foreignCorpusSideFile.getParent() + "/" + foreignCorpusSideFileName + ".tok" + "." + foreignFileNameSuffix;
 
         String englishCmd = "cat" + " " + this.englishCorpusSideFile.getAbsolutePath() + " | " + dstTokFile.getAbsolutePath() + " -l " + "en" + " | " + dstLowFile.getAbsolutePath() + " > " + outputEnglishFilePath;
         String foreignCmd = "cat" + " " + this.foreignCorpusSideFile.getAbsolutePath() + " | " + dstTokFile.getAbsolutePath() + " -l " + "en" + " | " + dstLowFile.getAbsolutePath() + " > " + outputForeignFilePath;
@@ -122,14 +125,19 @@ public class ParallerCorpus {
             throw new Exception("Foreign-corpus side tokenization exception, command did not return 0.");
         }
 
+        //Firstly remove originals
+        englishCorpusSideFile.delete();
+        foreignCorpusSideFile.delete();
+        //Then rename tokenized to original names.
+        renameFile(outputEnglishFilePath, englishCorpusSideFileName);
+        renameFile(outputForeignFilePath, foreignCorpusSideFileName);
+
+        englishCorpusSideFile = new File(englishFilePath);
+        foreignCorpusSideFile = new File(foreignFilePath);
+
         dstTokFile.delete();
         dstLowFile.delete();
         dstPrefixesFile.delete();
         dstPrefixesDir.delete();
-
-        englishFilePath = outputEnglishFilePath;
-        foreignFilePath = outputForeignFilePath;
-        englishCorpusSideFile = new File(englishFilePath);
-        foreignCorpusSideFile = new File(foreignFilePath);
     }
 }

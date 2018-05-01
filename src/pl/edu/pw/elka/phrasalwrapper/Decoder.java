@@ -8,6 +8,7 @@ import edu.stanford.nlp.util.StringUtils;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 /**
@@ -15,12 +16,15 @@ import java.util.*;
  */
 public class Decoder {
 
+    private LanguageModel languageModel;
     private String phraseTableFilePath;
     private String reorderingModelFilePath;
     private String languageModelFilePath;
     private String iniFilePath;
 
     public Decoder(LanguageModel languageModel, TranslationModel translationModel) {
+        this.languageModel = languageModel; //for loading kenLM library if not declared by user in -Djava.library.path=...
+
         File phraseTableFile = new File(translationModel.getOutputFolder() + "/phrase-table.gz");
         if (!phraseTableFile.exists()) {
             System.err.println("\nCheck if you've built translation model by calling TranslationModel.buildTranslationModel() method before.");
@@ -41,7 +45,7 @@ public class Decoder {
         try {
             File src_ini_file = new File(getClass().getResource("/phrasal.ini").getPath());
             File dst_ini_file = new File(translationModel.getOutputFolder()+"/phrasal.ini");
-            Files.copy(src_ini_file.toPath(), dst_ini_file.toPath());
+            Files.copy(src_ini_file.toPath(), dst_ini_file.toPath(), StandardCopyOption.REPLACE_EXISTING);
             this.iniFilePath = dst_ini_file.getAbsolutePath();
         } catch (IOException exp) {
             exp.printStackTrace();
@@ -133,6 +137,7 @@ public class Decoder {
 
         final Map<String, List<String>> configuration = getConfigurationFrom(configFile, options);
 
+        this.languageModel.extractAndLoadKenLMLibrary();
         edu.stanford.nlp.mt.lm.LanguageModel<IString> lm = LanguageModelFactory.load(options.getProperty("lmodel-file"));
         final Phrasal phrasal = Phrasal.loadDecoder(configuration, lm);
 

@@ -2,6 +2,8 @@ package run;
 
 import pl.edu.pw.elka.phrasalwrapper.*;
 
+import java.lang.reflect.Field;
+
 /**
  * Created by lsienko on 27.04.18.
  */
@@ -9,8 +11,8 @@ public class Example {
     //TODO move this out of the "run" package and remove "run" package
 
     public static void exampleUseCase() throws Exception {
-        ParallerCorpus corpus = new ParallerCorpus("/home/lsienko/Pobrane/test/europarl-v7.pl-en.en.tok.en",
-                "/home/lsienko/Pobrane/test/europarl-v7.pl-en.pl.tok.pl");
+        ParallerCorpus corpus = new ParallerCorpus("/home/lsienko/Pobrane/test/europarl-v7.pl-en.en",
+                "/home/lsienko/Pobrane/test/europarl-v7.pl-en.pl");
         //corpus.tokenize();
 
         WordAlignmentModel alignmentModel = new WordAlignmentModel(corpus);
@@ -20,14 +22,13 @@ public class Example {
         //languageModel.buildLanguageModel();
 
         TranslationModel translationModel = new TranslationModel(alignmentModel, corpus);
-        translationModel.buildTranslationModel();
+        //translationModel.buildTranslationModel();
 
         Decoder decoder = new Decoder(languageModel, translationModel);
         decoder.runConsoleInteractiveModeDecoding();
     }
 
     public static void main(String[] args) throws Exception {
-        //Phrasal.main(new String[] {"-help"});
         exampleUseCase();
     }
 }
