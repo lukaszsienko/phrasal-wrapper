@@ -24,59 +24,67 @@ public class WordAlignmentModel {
     }
 
     public void runWordAlignmentProcess() throws IOException {
+        this.runWordAlignmentProcess(null);
+    }
+
+    public void runWordAlignmentProcess(String [] userArgs) throws IOException {
         File outputDirectory = new File(this.outputFolder);
         if (outputDirectory.exists()) {
             FileUtils.deleteDirectory(outputDirectory);
         }
         outputDirectory.mkdir();
 
-        String [] args = new String[44];
-        args[0] = "-Main.forwardModels";
-        args[1] = "MODEL1";
-        args[2] = "HMM";
-        args[3] = "-Main.reverseModels";
-        args[4] = "MODEL1";
-        args[5] = "HMM";
-        args[6] = "-Main.mode";
-        args[7] = "JOINT";
-        args[8] = "JOINT";
-        args[9] = "-Main.iters";
-        args[10] = "2";
-        args[11] = "2";
-        args[12] = "-exec.execDir";
-        args[13] = outputDirectory.getAbsolutePath();
-        args[14] = "-exec.create";
-        args[15] = "true";
-        args[16] = "-Main.saveParams";
-        args[17] = "true";
-        args[18] = "-EMWordAligner.numThreads";
-        args[19] = "1";
-        args[20] = "-log.msPerLine";
-        args[21] = "10000";
-        args[22] = "-Main.alignTraining";
-        args[23] = "true";
-        args[24] = "-Data.foreignSuffix";
-        args[25] = foreignFileNameSuffix;
-        args[26] = "-Data.englishSuffix";
-        args[27] = englishFileNameSuffix;
-        args[28] = "-Data.lowercaseWords";
-        args[29] = "true";
-        args[30] = "-Data.trainSources";
-        args[31] = inputFolder;
-        args[32] = "-Data.sentences";
-        args[33] = "MAX";
-        args[34] = "-Data.testSources";
-        args[35] = outputFolder;
-        args[36] = "-Data.maxTestSentences";
-        args[37] = "MAX";
-        args[38] = "-Data.offsetTestSentences";
-        args[39] = "0";
-        args[40] = "-Main.competitiveThresholding";
-        args[41] = "true";
-        args[42] = "-exec.overwriteExecDir";
-        args[43] = "true";
+        String [] defaultArgs = new String[44];
+        defaultArgs[0] = "-Main.forwardModels";
+        defaultArgs[1] = "MODEL1";
+        defaultArgs[2] = "HMM";
+        defaultArgs[3] = "-Main.reverseModels";
+        defaultArgs[4] = "MODEL1";
+        defaultArgs[5] = "HMM";
+        defaultArgs[6] = "-Main.mode";
+        defaultArgs[7] = "JOINT";
+        defaultArgs[8] = "JOINT";
+        defaultArgs[9] = "-Main.iters";
+        defaultArgs[10] = "2";
+        defaultArgs[11] = "2";
+        defaultArgs[12] = "-exec.execDir";
+        defaultArgs[13] = outputDirectory.getAbsolutePath();
+        defaultArgs[14] = "-exec.create";
+        defaultArgs[15] = "true";
+        defaultArgs[16] = "-Main.saveParams";
+        defaultArgs[17] = "true";
+        defaultArgs[18] = "-EMWordAligner.numThreads";
+        defaultArgs[19] = "1";
+        defaultArgs[20] = "-log.msPerLine";
+        defaultArgs[21] = "10000";
+        defaultArgs[22] = "-Main.alignTraining";
+        defaultArgs[23] = "true";
+        defaultArgs[24] = "-Data.foreignSuffix";
+        defaultArgs[25] = foreignFileNameSuffix;
+        defaultArgs[26] = "-Data.englishSuffix";
+        defaultArgs[27] = englishFileNameSuffix;
+        defaultArgs[28] = "-Data.lowercaseWords";
+        defaultArgs[29] = "true";
+        defaultArgs[30] = "-Data.trainSources";
+        defaultArgs[31] = inputFolder;
+        defaultArgs[32] = "-Data.sentences";
+        defaultArgs[33] = "MAX";
+        defaultArgs[34] = "-Data.testSources";
+        defaultArgs[35] = outputFolder;
+        defaultArgs[36] = "-Data.maxTestSentences";
+        defaultArgs[37] = "MAX";
+        defaultArgs[38] = "-Data.offsetTestSentences";
+        defaultArgs[39] = "0";
+        defaultArgs[40] = "-Main.competitiveThresholding";
+        defaultArgs[41] = "true";
+        defaultArgs[42] = "-exec.overwriteExecDir";
+        defaultArgs[43] = "true";
 
-        Main.main(args);
+        if (userArgs != null) {
+            Main.main(userArgs);
+        } else {
+            Main.main(defaultArgs);
+        }
     }
 
     public static void printAllOptions() {

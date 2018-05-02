@@ -54,6 +54,10 @@ public class Decoder {
     }
 
     public void runConsoleInteractiveModeDecoding() {
+        this.runConsoleInteractiveModeDecoding(null);
+    }
+
+    public void runConsoleInteractiveModeDecoding(String [] userArgs) {
         try {
             String[] decode_args = new String[13];
             decode_args[0] = "-ttable-file";
@@ -70,7 +74,13 @@ public class Decoder {
             decode_args[11] = "hierarchical" + " " + reorderingModelFilePath + " " + "msd2-bidirectional-fe";
             decode_args[12] = iniFilePath;
 
-            Phrasal phrasal = prepareDecoding(decode_args);
+            Phrasal phrasal = null;
+            if (userArgs != null) {
+                phrasal = prepareDecoding(userArgs);
+            } else {
+                phrasal = prepareDecoding(decode_args);
+            }
+
             phrasal.decode(System.in, true);
         } catch (Exception e) {
             e.printStackTrace();
@@ -78,6 +88,10 @@ public class Decoder {
     }
 
     public void runFileDecoding(String fileToBeTranslatedPath, String translationOutputFilePath) {
+        this.runFileDecoding(fileToBeTranslatedPath, translationOutputFilePath, null);
+    }
+
+    public void runFileDecoding(String fileToBeTranslatedPath, String translationOutputFilePath, String [] userArgs) {
         try {
             File toTranslate = new File(fileToBeTranslatedPath);
             if (!toTranslate.exists()) {
@@ -108,7 +122,12 @@ public class Decoder {
             decode_args[13] = toTranslatePath;
             decode_args[14] = iniFilePath;
 
-            Phrasal phrasal = prepareDecoding(decode_args);
+            Phrasal phrasal = null;
+            if (userArgs != null) {
+                phrasal = prepareDecoding(userArgs);
+            } else {
+                phrasal = prepareDecoding(decode_args);
+            }
 
             //Save standard output
             PrintStream stdout = System.out;

@@ -24,6 +24,10 @@ public class TranslationModel {
     }
 
     public void buildTranslationModel() throws IOException {
+        this.buildTranslationModel(null);
+    }
+
+    public void buildTranslationModel(String [] userArgs) throws IOException {
         File outputDirectory = new File(this.outputFolder);
         if (outputDirectory.exists()) {
             FileUtils.deleteDirectory(outputDirectory);
@@ -59,7 +63,11 @@ public class TranslationModel {
         System.setProperty("ShowPhraseRestriction", "true");
 
         try {
-            PhraseExtract.main(phrase_extract_args);
+            if (userArgs != null) {
+                PhraseExtract.main(userArgs);
+            } else {
+                PhraseExtract.main(phrase_extract_args);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("\nCheck if you've built word aligment model by calling WordAlignmentModel.runWordAlignmentProcess() method before.");

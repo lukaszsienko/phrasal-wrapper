@@ -7,19 +7,19 @@ public class Example {
 
     public static void exampleUseCase(String englishFilePath, String foreignFilePath) throws Exception {
         ParallerCorpus corpus = new ParallerCorpus(englishFilePath, foreignFilePath);
-        //corpus.tokenize();
+        corpus.tokenize();
 
-        /*WordAlignmentModel alignmentModel = new WordAlignmentModel(corpus);
-        alignmentModel.runWordAlignmentProcess();*/
+        WordAlignmentModel alignmentModel = new WordAlignmentModel(corpus);
+        alignmentModel.runWordAlignmentProcess();
 
         LanguageModel languageModel = new LanguageModel(5, corpus);
         languageModel.buildLanguageModel();
 
-        /*TranslationModel translationModel = new TranslationModel(alignmentModel, corpus);
+        TranslationModel translationModel = new TranslationModel(alignmentModel, corpus);
         translationModel.buildTranslationModel();
 
         Decoder decoder = new Decoder(languageModel, translationModel);
-        decoder.runConsoleInteractiveModeDecoding();*/
+        decoder.runConsoleInteractiveModeDecoding();
     }
 
     public static void main(String[] args) throws Exception {
