@@ -43,16 +43,16 @@ public class LanguageModel {
             String textModelFileName = modelFileName+".arpa";
             String textModelPath = outputFolder+"/"+textModelFileName;
 
-            String chmodCommand = "chmod +x "+dest.getAbsolutePath()+"/kenlm/bin/lmplz"+" "+dest.getAbsolutePath()+"/kenlm/bin/build_binary";
-            String buildCommand = dest.getAbsolutePath()+"/kenlm/bin/lmplz -o " + ngram + " < " + englishSideOfCorpusFilePath + " > "+textModelPath;
-            String transferCommand = dest.getAbsolutePath()+"/kenlm/bin/build_binary trie "+outputFolder+"/"+textModelFileName+" "+outputFolder+"/"+getModelBinaryFileName();
+            File lmplzExecutable = new File(dest.getAbsolutePath()+"/kenlm/bin/lmplz");
+            File buildBinaryExecutable = new File(dest.getAbsolutePath()+"/kenlm/bin/build_binary");
+
+            lmplzExecutable.setExecutable(true);
+            buildBinaryExecutable.setExecutable(true);
+
+            String buildCommand = lmplzExecutable.getAbsolutePath()+" -o " + ngram + " < " + englishSideOfCorpusFilePath + " > "+textModelPath;
+            String transferCommand = buildBinaryExecutable.getAbsolutePath()+" trie "+outputFolder+"/"+textModelFileName+" "+outputFolder+"/"+getModelBinaryFileName();
 
             Runtime runtime = Runtime.getRuntime();
-            Process chmodProcess = runtime.exec(chmodCommand);
-            chmodProcess.waitFor();
-            if (chmodProcess.exitValue() != 0) {
-                throw new Exception("Language model building exception, chmod command did not return 0.");
-            }
 
             String[] build_cmd = {"/bin/sh","-c", buildCommand};
             Process buildTextModel = runtime.exec(build_cmd);

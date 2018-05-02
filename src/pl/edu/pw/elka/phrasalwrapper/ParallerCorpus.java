@@ -110,6 +110,9 @@ public class ParallerCorpus {
 
         Runtime runtime = Runtime.getRuntime();
 
+        dstTokFile.setExecutable(true);
+        dstLowFile.setExecutable(true);
+
         String[] eng_cmd = {"/bin/sh","-c",englishCmd};
         String[] for_cmd = {"/bin/sh","-c",foreignCmd};
         Process engProcess = runtime.exec(eng_cmd);

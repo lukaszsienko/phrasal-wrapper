@@ -4,10 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URLDecoder;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.*;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +19,12 @@ public class Utilities {
 
         URI uri = URI.create("jar:file:"+decodedPathToJar);
         Map<String, String> env = new HashMap<>();
-        FileSystem fs = FileSystems.newFileSystem(uri, env);
+        FileSystem fs;
+        try {
+            fs = FileSystems.newFileSystem(uri, env);
+        } catch (FileSystemAlreadyExistsException exp) {
+            fs = FileSystems.getFileSystem(uri);
+        }
         return fs.getPath(pathToResourceInsideJar);
     }
 
