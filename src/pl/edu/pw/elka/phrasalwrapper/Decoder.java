@@ -82,11 +82,6 @@ public class Decoder {
                 phrasal = prepareDecoding(decode_args);
             }
 
-            //TODO remove this:
-            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss dd-MM-yyyy");
-            Date now = new Date();
-            System.out.println("Decoding finished. Now is: "+formatter.format(now));
-
             phrasal.decode(System.in, true);
         } catch (Exception e) {
             e.printStackTrace();

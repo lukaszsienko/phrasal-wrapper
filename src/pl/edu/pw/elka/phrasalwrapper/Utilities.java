@@ -93,7 +93,6 @@ public class Utilities {
     public static void forbidSystemExitCall() {
         final SecurityManager securityManager = new SecurityManager() {
             public void checkPermission( Permission permission ) {
-                System.out.println(permission.getName());
                 if( permission.getName().startsWith("exitVM") ) {
                     throw new ExitTrappedException() ;
                 }

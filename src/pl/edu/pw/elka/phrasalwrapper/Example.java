@@ -1,100 +1,26 @@
 package pl.edu.pw.elka.phrasalwrapper;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 /**
  * Created by lsienko on 27.04.18.
  */
 public class Example {
 
     public static void exampleUseCase(String englishFilePath, String foreignFilePath) throws Exception {
-        printCurrentTimestamp();
-        System.out.println("Program started. Starting tokenization...");
-        Date start = new Date();//////////////
-
         ParallerCorpus corpus = new ParallerCorpus(englishFilePath, foreignFilePath);
         corpus.tokenize();
-
-        Date token_end = new Date();/////////////
-        System.out.println("Tokenization finished. It takes ");
-        printDifference(start, token_end);
-
-        System.out.println("Alignment starting...");
-        Date start_align = new Date();//////////////
 
         WordAlignmentModel alignmentModel = new WordAlignmentModel(corpus);
         alignmentModel.runWordAlignmentProcess();
 
-        Date end_align = new Date();/////////////
-        System.out.println("Alignment finished. It takes ");
-        printDifference(start_align, end_align);
-        System.out.println("Total time from program start: ");
-        printDifference(start, end_align);
-
-        System.out.println("Language model starting...");
-        Date language_model_start = new Date();/////////////
-
         LanguageModel languageModel = new LanguageModel(5, corpus);
         languageModel.buildLanguageModel();
-
-        Date language_model_end = new Date();/////////////
-        System.out.println("Language model finished. It takes ");
-        printDifference(language_model_start, language_model_end);
-        System.out.println("Total time from program start: ");
-        printDifference(start, language_model_end);
-
-        System.out.println("Translation model starting...");
-        Date translation_model_start = new Date();/////////////
 
         TranslationModel translationModel = new TranslationModel(alignmentModel, corpus);
         translationModel.buildTranslationModel();
 
-        Date translation_model_end = new Date();/////////////
-        System.out.println("Translation model finished. It takes ");
-        printDifference(translation_model_start, translation_model_end);
-        System.out.println("Total time from program start: ");
-        printDifference(start, translation_model_end);
-
-        System.out.println("Decoding starting...");
-        printCurrentTimestamp();
-
         Decoder decoder = new Decoder(languageModel, translationModel);
         decoder.runConsoleInteractiveModeDecoding();
     }
-
-    public static void printCurrentTimestamp() {
-        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss dd-MM-yyyy");
-        Date now = new Date();
-        System.out.println(formatter.format(now));
-    }
-
-    public static void printDifference(Date startDate, Date endDate) {
-        //milliseconds
-        long different = endDate.getTime() - startDate.getTime();
-
-        long secondsInMilli = 1000;
-        long minutesInMilli = secondsInMilli * 60;
-        long hoursInMilli = minutesInMilli * 60;
-        long daysInMilli = hoursInMilli * 24;
-
-        long elapsedDays = different / daysInMilli;
-        different = different % daysInMilli;
-
-        long elapsedHours = different / hoursInMilli;
-        different = different % hoursInMilli;
-
-        long elapsedMinutes = different / minutesInMilli;
-        different = different % minutesInMilli;
-
-        long elapsedSeconds = different / secondsInMilli;
-
-        System.out.printf(
-                "%d days, %d hours, %d minutes, %d seconds%n",
-                elapsedDays,
-                elapsedHours, elapsedMinutes, elapsedSeconds);
-    }
-
 
     public static void main(String[] args) throws Exception {
         /*String englishFilePath = "/home/lsienko/Pobrane/test/europarl-v7.pl-en.en";
