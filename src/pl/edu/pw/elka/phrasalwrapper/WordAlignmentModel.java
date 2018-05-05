@@ -80,16 +80,32 @@ public class WordAlignmentModel {
         defaultArgs[42] = "-exec.overwriteExecDir";
         defaultArgs[43] = "true";
 
-        if (userArgs != null) {
-            Main.main(userArgs);
-        } else {
-            Main.main(defaultArgs);
+        Utilities.forbidSystemExitCall();
+
+        try {
+            if (userArgs != null) {
+                Main.main(userArgs);
+            } else {
+                Main.main(defaultArgs);
+            }
+        } catch (Utilities.ExitTrappedException exp) {
+            // Do nothing, just continue.
         }
+
+        Utilities.enableSystemExitCall();
     }
 
     public static void printAllOptions() {
-        String [] args = new String[] {"-help"};
-        Main.main(args);
+        Utilities.forbidSystemExitCall();
+
+        try {
+            String [] args = new String[] {"-help"};
+            Main.main(args);
+        } catch (Utilities.ExitTrappedException exp) {
+            // Do nothing, just continue.
+        }
+
+        Utilities.enableSystemExitCall();
     }
 
     public String getOutputFolderPath() {

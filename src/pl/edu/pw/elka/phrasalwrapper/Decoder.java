@@ -10,6 +10,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -80,6 +81,11 @@ public class Decoder {
             } else {
                 phrasal = prepareDecoding(decode_args);
             }
+
+            //TODO remove this:
+            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss dd-MM-yyyy");
+            Date now = new Date();
+            System.out.println("Decoding finished. Now is: "+formatter.format(now));
 
             phrasal.decode(System.in, true);
         } catch (Exception e) {

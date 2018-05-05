@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.file.*;
+import java.security.Permission;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -85,6 +86,24 @@ public class Utilities {
         }
 
         System.err.println("Exit status=" + process.exitValue());
+    }
+
+    public static class ExitTrappedException extends SecurityException { }
+
+    public static void forbidSystemExitCall() {
+        final SecurityManager securityManager = new SecurityManager() {
+            public void checkPermission( Permission permission ) {
+                System.out.println(permission.getName());
+                if( permission.getName().startsWith("exitVM") ) {
+                    throw new ExitTrappedException() ;
+                }
+            }
+        } ;
+        System.setSecurityManager( securityManager ) ;
+    }
+
+    public static void enableSystemExitCall() {
+        System.setSecurityManager( null ) ;
     }
 
 }
