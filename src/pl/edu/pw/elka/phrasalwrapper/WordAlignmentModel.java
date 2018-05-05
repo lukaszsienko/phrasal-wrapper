@@ -11,14 +11,14 @@ import java.io.IOException;
  */
 public class WordAlignmentModel {
 
-    private String inputFolder;
-    private String outputFolder;
+    private String inputFolderPath;
+    private String outputFolderPath;
     private String englishFileNameSuffix;
     private String foreignFileNameSuffix;
 
-    public WordAlignmentModel(ParallerCorpus parallerCorpus) {
-        this.inputFolder = new File(parallerCorpus.getEnglishFilePath()).getParent();
-        this.outputFolder = parallerCorpus.getPathToModelsFolder()+"/aligner_output";
+    public WordAlignmentModel(ParallerCorpus parallerCorpus) throws IOException {
+        this.inputFolderPath = new File(parallerCorpus.getEnglishFilePath()).getParentFile().getCanonicalPath();
+        this.outputFolderPath = parallerCorpus.getPathToModelsFolder()+"/aligner_output";
         this.englishFileNameSuffix = parallerCorpus.getEnglishFileNameSuffix();
         this.foreignFileNameSuffix = parallerCorpus.getForeignFileNameSuffix();
     }
@@ -28,7 +28,7 @@ public class WordAlignmentModel {
     }
 
     public void runWordAlignmentProcess(String [] userArgs) throws IOException {
-        File outputDirectory = new File(this.outputFolder);
+        File outputDirectory = new File(this.outputFolderPath);
         if (outputDirectory.exists()) {
             FileUtils.deleteDirectory(outputDirectory);
         }
@@ -48,7 +48,7 @@ public class WordAlignmentModel {
         defaultArgs[10] = "2";
         defaultArgs[11] = "2";
         defaultArgs[12] = "-exec.execDir";
-        defaultArgs[13] = outputDirectory.getAbsolutePath();
+        defaultArgs[13] = outputDirectory.getCanonicalPath();
         defaultArgs[14] = "-exec.create";
         defaultArgs[15] = "true";
         defaultArgs[16] = "-Main.saveParams";
@@ -66,11 +66,11 @@ public class WordAlignmentModel {
         defaultArgs[28] = "-Data.lowercaseWords";
         defaultArgs[29] = "true";
         defaultArgs[30] = "-Data.trainSources";
-        defaultArgs[31] = inputFolder;
+        defaultArgs[31] = inputFolderPath;
         defaultArgs[32] = "-Data.sentences";
         defaultArgs[33] = "MAX";
         defaultArgs[34] = "-Data.testSources";
-        defaultArgs[35] = outputFolder;
+        defaultArgs[35] = outputFolderPath;
         defaultArgs[36] = "-Data.maxTestSentences";
         defaultArgs[37] = "MAX";
         defaultArgs[38] = "-Data.offsetTestSentences";
@@ -92,7 +92,7 @@ public class WordAlignmentModel {
         Main.main(args);
     }
 
-    public String getOutputFolder() {
-        return outputFolder;
+    public String getOutputFolderPath() {
+        return outputFolderPath;
     }
 }

@@ -23,7 +23,7 @@ public class Decoder {
     private String languageModelFilePath;
     private String iniFilePath;
 
-    public Decoder(LanguageModel languageModel, TranslationModel translationModel) {
+    public Decoder(LanguageModel languageModel, TranslationModel translationModel) throws IOException {
         this.languageModel = languageModel; //for loading kenLM library if not declared by user in -Djava.library.path=...
 
         File phraseTableFile = new File(translationModel.getOutputFolder() + "/phrase-table.gz");
@@ -34,20 +34,20 @@ public class Decoder {
         if (!reorderingModelFile.exists()) {
             System.err.println("\nCheck if you've built translation model by calling TranslationModel.buildTranslationModel() method before.");
         }
-        this.phraseTableFilePath = phraseTableFile.getAbsolutePath();
-        this.reorderingModelFilePath = reorderingModelFile.getAbsolutePath();
+        this.phraseTableFilePath = phraseTableFile.getCanonicalPath();
+        this.reorderingModelFilePath = reorderingModelFile.getCanonicalPath();
 
         File langModelFile = new File(languageModel.getOutputFolder()+"/"+languageModel.getModelBinaryFileName());
         if (!langModelFile.exists()) {
             System.err.println("\nCheck if you've built language model by calling LanguageModel.buildLanguageModel() method before.");
         }
-        this.languageModelFilePath = langModelFile.getAbsolutePath();
+        this.languageModelFilePath = langModelFile.getCanonicalPath();
 
         try {
             Path iniFilePath = Utilities.getResourcePath("/phrasal.ini");
             File dstIniFile = new File(translationModel.getOutputFolder()+"/phrasal.ini");
             Files.copy(iniFilePath, dstIniFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            this.iniFilePath = dstIniFile.getAbsolutePath();
+            this.iniFilePath = dstIniFile.getCanonicalPath();
         } catch (IOException exp) {
             exp.printStackTrace();
         }
@@ -105,7 +105,7 @@ public class Decoder {
             }
 
             String[] decode_args = new String[15];
-            String toTranslatePath = toTranslate.getAbsolutePath();
+            String toTranslatePath = toTranslate.getCanonicalPath();
             decode_args[0] = "-ttable-file";
             decode_args[1] = phraseTableFilePath;
             decode_args[2] = "-lmodel-file";

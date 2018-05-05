@@ -1,7 +1,9 @@
 package pl.edu.pw.elka.phrasalwrapper;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.file.*;
@@ -37,7 +39,12 @@ public class Utilities {
 
         URI uriToJar = URI.create("jar:file:"+decodedPathToJar);
         Map<String, String> env = new HashMap<>();
-        FileSystem fs = FileSystems.newFileSystem(uriToJar, env);
+        FileSystem fs;
+        try {
+            fs = FileSystems.newFileSystem(uriToJar, env);
+        } catch (FileSystemAlreadyExistsException exp) {
+            fs = FileSystems.getFileSystem(uriToJar);
+        }
 
         JarEntry entry;
         for (Enumeration<JarEntry> enumEntry = jarFile.entries(); enumEntry.hasMoreElements(); ) {
@@ -58,6 +65,26 @@ public class Utilities {
                 Files.copy(pathToResourceInsideJar, outputFile.toPath());
             }
         }
+    }
+
+    public static void printOutput(Process process) throws IOException {
+        BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+        BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+
+        // read the output from the command
+        System.out.println("Here is the standard output of the command:\n");
+        String s = null;
+        while ((s = stdInput.readLine()) != null) {
+            System.out.println(s);
+        }
+
+        // read any errors from the attempted command
+        System.out.println("Here is the standard error of the command (if any):\n");
+        while ((s = stdError.readLine()) != null) {
+            System.out.println(s);
+        }
+
+        System.err.println("Exit status=" + process.exitValue());
     }
 
 }

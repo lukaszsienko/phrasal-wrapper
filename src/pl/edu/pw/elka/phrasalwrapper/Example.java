@@ -32,31 +32,6 @@ public class Example {
     }
 }
 
-
-/**
- * //////////////////////////////////
- *         BufferedReader stdInput = new BufferedReader(new
- *                 InputStreamReader(engProcess.getInputStream()));
- *
- *         BufferedReader stdError = new BufferedReader(new
- *                 InputStreamReader(engProcess.getErrorStream()));
- *
- * // read the output from the command
- *         System.out.println("Here is the standard output of the command:\n");
- *         String s = null;
- *         while ((s = stdInput.readLine()) != null) {
- *             System.out.println(s);
- *         }
- *
- * // read any errors from the attempted command
- *         System.out.println("Here is the standard error of the command (if any):\n");
- *         while ((s = stdError.readLine()) != null) {
- *             System.out.println(s);
- *         }
- * //////////////////////////////////
- *         System.err.println("Exit status=" + engProcess.exitValue());
- */
-
 /*
          Usage: java edu.stanford.nlp.mt.Phrasal OPTS [ini_file] < input > output
 

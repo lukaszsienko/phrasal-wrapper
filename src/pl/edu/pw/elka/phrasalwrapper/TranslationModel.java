@@ -34,11 +34,11 @@ public class TranslationModel {
         }
         outputDirectory.mkdir();
 
-        File berkeley_aligner_folder = new File(alignmentModel.getOutputFolder());
-        String aligner_folder_path = berkeley_aligner_folder.getAbsolutePath();
+        File berkeley_aligner_folder = new File(alignmentModel.getOutputFolderPath());
+        String aligner_folder_path = berkeley_aligner_folder.getCanonicalPath();
 
         File translation_model_folder = new File(outputFolder);
-        String translation_model_path = translation_model_folder.getAbsolutePath();
+        String translation_model_path = translation_model_folder.getCanonicalPath();
 
         String[] phrase_extract_args = new String[18];
         phrase_extract_args[0] = "-threads";
