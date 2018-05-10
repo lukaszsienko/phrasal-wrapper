@@ -7,10 +7,10 @@ import edu.stanford.nlp.mt.util.IString;
 import edu.stanford.nlp.util.StringUtils;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -23,6 +23,9 @@ public class Decoder {
     private String reorderingModelFilePath;
     private String languageModelFilePath;
     private String iniFilePath;
+    private final PrintStream STD_OUT;
+
+    private Phrasal loadedDecodingModel;
 
     public Decoder(LanguageModel languageModel, TranslationModel translationModel) throws IOException {
         this.languageModel = languageModel; //for loading kenLM library if not declared by user in -Djava.library.path=...
@@ -52,47 +55,98 @@ public class Decoder {
         } catch (IOException exp) {
             exp.printStackTrace();
         }
+
+        STD_OUT = System.out;
     }
 
-    public void runConsoleInteractiveModeDecoding() {
-        this.runConsoleInteractiveModeDecoding(null);
-    }
-
-    public void runConsoleInteractiveModeDecoding(String [] userArgs) {
+    public void loadModelWithDefaultConfigInServerMode() {
+        String[] decode_args = getDecodingFromConsoleParameters();
         try {
-            String[] decode_args = new String[13];
-            decode_args[0] = "-ttable-file";
-            decode_args[1] = phraseTableFilePath;
-            decode_args[2] = "-lmodel-file";
-            decode_args[3] = "kenlm:"+languageModelFilePath;
-            decode_args[4] = "-ttable-limit";
-            decode_args[5] = "20";
-            decode_args[6] = "-distortion-limit";
-            decode_args[7] = "5";
-            decode_args[8] = "-threads";
-            decode_args[9] = "2";
-            decode_args[10] = "-reordering-model";
-            decode_args[11] = "hierarchical" + " " + reorderingModelFilePath + " " + "msd2-bidirectional-fe";
-            decode_args[12] = iniFilePath;
-
-            Phrasal phrasal = null;
-            if (userArgs != null) {
-                phrasal = prepareDecoding(userArgs);
-            } else {
-                phrasal = prepareDecoding(decode_args);
-            }
-
-            phrasal.decode(System.in, true);
+            loadedDecodingModel = prepareDecoding(decode_args);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void runFileDecoding(String fileToBeTranslatedPath, String translationOutputFilePath) {
-        this.runFileDecoding(fileToBeTranslatedPath, translationOutputFilePath, null);
+    public String translateSentenceInServerMode(String sentenceToTranslate) {
+        if (loadedDecodingModel == null) {
+            loadModelWithDefaultConfigInServerMode();
+        }
+
+        InputStream inputStream = new ByteArrayInputStream(sentenceToTranslate.getBytes(StandardCharsets.UTF_8));
+
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        PrintStream outputStream = null;
+        try {
+            outputStream = new PrintStream(output, true, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        System.setOut(outputStream);
+
+        try {
+            loadedDecodingModel.decode(inputStream, true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.setOut(STD_OUT); //Restore standard output
+
+        String translatedSentence = new String(output.toByteArray(), StandardCharsets.UTF_8);
+
+        try {
+            output.close();
+            outputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return translatedSentence;
     }
 
-    public void runFileDecoding(String fileToBeTranslatedPath, String translationOutputFilePath, String [] userArgs) {
+    public void runDecodingFromConsoleInInteractiveMode() {
+        String[] decode_args = getDecodingFromConsoleParameters();
+        try {
+            loadedDecodingModel = prepareDecoding(decode_args);
+            loadedDecodingModel.decode(System.in, true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void runDecodingFromConsoleInInteractiveMode(String [] userArgs) {
+        try {
+            loadedDecodingModel = prepareDecoding(userArgs);
+            loadedDecodingModel.decode(System.in, true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String[] getDecodingFromConsoleParameters() {
+        String[] decode_args = new String[13];
+        decode_args[0] = "-ttable-file";
+        decode_args[1] = phraseTableFilePath;
+        decode_args[2] = "-lmodel-file";
+        decode_args[3] = "kenlm:"+languageModelFilePath;
+        decode_args[4] = "-ttable-limit";
+        decode_args[5] = "20";
+        decode_args[6] = "-distortion-limit";
+        decode_args[7] = "5";
+        decode_args[8] = "-threads";
+        decode_args[9] = "2";
+        decode_args[10] = "-reordering-model";
+        decode_args[11] = "hierarchical" + " " + reorderingModelFilePath + " " + "msd2-bidirectional-fe";
+        decode_args[12] = iniFilePath;
+
+        return decode_args;
+    }
+
+    public void runDecodingFromFile(String fileToBeTranslatedPath, String translationOutputFilePath) {
+        this.runDecodingFromFile(fileToBeTranslatedPath, translationOutputFilePath, null);
+    }
+
+    public void runDecodingFromFile(String fileToBeTranslatedPath, String translationOutputFilePath, String [] userArgs) {
         try {
             File toTranslate = new File(fileToBeTranslatedPath);
             if (!toTranslate.exists()) {
@@ -105,43 +159,45 @@ public class Decoder {
                 throw new Exception("Output file to could not be created.");
             }
 
-            String[] decode_args = new String[15];
-            String toTranslatePath = toTranslate.getCanonicalPath();
-            decode_args[0] = "-ttable-file";
-            decode_args[1] = phraseTableFilePath;
-            decode_args[2] = "-lmodel-file";
-            decode_args[3] = "kenlm:"+languageModelFilePath;
-            decode_args[4] = "-ttable-limit";
-            decode_args[5] = "20";
-            decode_args[6] = "-distortion-limit";
-            decode_args[7] = "5";
-            decode_args[8] = "-threads";
-            decode_args[9] = "2";
-            decode_args[10] = "-reordering-model";
-            decode_args[11] = "hierarchical" + " " + reorderingModelFilePath + " " + "msd2-bidirectional-fe";
-            decode_args[12] = "-text";
-            decode_args[13] = toTranslatePath;
-            decode_args[14] = iniFilePath;
-
-            Phrasal phrasal = null;
             if (userArgs != null) {
-                phrasal = prepareDecoding(userArgs);
+                loadedDecodingModel = prepareDecoding(userArgs);
             } else {
-                phrasal = prepareDecoding(decode_args);
+                String toTranslatePath = toTranslate.getCanonicalPath();
+                String[] decode_args = getDecodingFromFileParameters(toTranslatePath);
+                loadedDecodingModel = prepareDecoding(decode_args);
             }
 
-            //Save standard output
-            PrintStream stdout = System.out;
             //Set standard output to specified file (file with translation)
             PrintStream output = new PrintStream(new FileOutputStream(translationOutput.getAbsoluteFile()));
             System.setOut(output);
             //Start translation
-            phrasal.decode(new FileInputStream(toTranslate), true);
+            loadedDecodingModel.decode(new FileInputStream(toTranslate), true);
             //Restore standard output
-            System.setOut(stdout);
+            System.setOut(STD_OUT);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private String[] getDecodingFromFileParameters(String toTranslatePath) {
+        String[] decode_args = new String[15];
+        decode_args[0] = "-ttable-file";
+        decode_args[1] = phraseTableFilePath;
+        decode_args[2] = "-lmodel-file";
+        decode_args[3] = "kenlm:"+languageModelFilePath;
+        decode_args[4] = "-ttable-limit";
+        decode_args[5] = "20";
+        decode_args[6] = "-distortion-limit";
+        decode_args[7] = "5";
+        decode_args[8] = "-threads";
+        decode_args[9] = "2";
+        decode_args[10] = "-reordering-model";
+        decode_args[11] = "hierarchical" + " " + reorderingModelFilePath + " " + "msd2-bidirectional-fe";
+        decode_args[12] = "-text";
+        decode_args[13] = toTranslatePath;
+        decode_args[14] = iniFilePath;
+
+        return decode_args;
     }
 
     private Phrasal prepareDecoding(String[] args) throws Exception {

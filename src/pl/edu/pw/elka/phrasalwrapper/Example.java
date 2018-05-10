@@ -19,7 +19,7 @@ public class Example {
         translationModel.buildTranslationModel();
 
         Decoder decoder = new Decoder(languageModel, translationModel);
-        decoder.runConsoleInteractiveModeDecoding();
+        decoder.runDecodingFromConsoleInInteractiveMode();
     }
 
     public static void main(String[] args) throws Exception {
