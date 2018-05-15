@@ -73,7 +73,8 @@ public class Decoder {
             loadModelWithDefaultConfigInServerMode();
         }
 
-        InputStream inputStream = new ByteArrayInputStream(sentenceToTranslate.getBytes(StandardCharsets.UTF_8));
+        String input = Utilities.cleanTextBeforeProcessing(sentenceToTranslate);
+        InputStream inputStream = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         PrintStream outputStream = null;
@@ -105,6 +106,7 @@ public class Decoder {
     }
 
     public void runDecodingFromConsoleInInteractiveMode() {
+        //TODO add Utilities.cleanTextBeforeProcessing of input from System.in, postponed because feature not used
         String[] decode_args = getDecodingFromConsoleParameters();
         try {
             loadedDecodingModel = prepareDecoding(decode_args);
@@ -115,6 +117,7 @@ public class Decoder {
     }
 
     public void runDecodingFromConsoleInInteractiveMode(String [] userArgs) {
+        //TODO add Utilities.cleanTextBeforeProcessing of input from System.in, postponed because feature not used
         try {
             loadedDecodingModel = prepareDecoding(userArgs);
             loadedDecodingModel.decode(System.in, true);
@@ -147,6 +150,7 @@ public class Decoder {
     }
 
     public void runDecodingFromFile(String fileToBeTranslatedPath, String translationOutputFilePath, String [] userArgs) {
+        //TODO add Utilities.cleanTextBeforeProcessing of input File contents, postponed because feature not used
         try {
             File toTranslate = new File(fileToBeTranslatedPath);
             if (!toTranslate.exists()) {

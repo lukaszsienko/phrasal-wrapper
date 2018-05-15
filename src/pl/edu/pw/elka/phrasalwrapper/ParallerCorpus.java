@@ -119,7 +119,7 @@ public class ParallerCorpus {
             String currentLine;
             while ((currentLine = in.readLine()) != null) {
                 //process currentLine
-                currentLine = currentLine.toLowerCase().replaceAll("\\p{P}", "").replaceAll(" +", " ").trim();
+                currentLine = Utilities.cleanTextBeforeProcessing(currentLine);
 
                 //write to output
                 out.write(currentLine+"\n");

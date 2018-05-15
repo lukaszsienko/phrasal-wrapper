@@ -105,4 +105,8 @@ public class Utilities {
         System.setSecurityManager( null ) ;
     }
 
+    public static String cleanTextBeforeProcessing(String text) {
+        return text.toLowerCase().replaceAll("\\p{P}", "").replaceAll(" +", " ").trim();
+    }
+
 }
