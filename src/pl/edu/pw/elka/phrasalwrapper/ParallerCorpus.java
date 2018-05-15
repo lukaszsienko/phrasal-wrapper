@@ -83,68 +83,52 @@ public class ParallerCorpus {
     }
 
     public void tokenize() throws Exception {
-        Path srcTokFilePath = Utilities.getResourcePath("/tokenizer/tokenizer.perl");
-        Path srcLowFilePath = Utilities.getResourcePath("/tokenizer/lowercase.perl");
-        Path prefixFilePath = Utilities.getResourcePath("/tokenizer/nonbreaking_prefixes/nonbreaking_prefix.en");
+        File engResult = tokenizeFile(englishCorpusSideFile);
+        File forResult = tokenizeFile(foreignCorpusSideFile);
 
-        File dstTokFile = new File(this.englishCorpusSideFile.getParentFile().getCanonicalPath() + "/tokenizer.perl");
-        File dstLowFile = new File(this.englishCorpusSideFile.getParentFile().getCanonicalPath() + "/lowercase.perl");
-        File dstPrefixesDir = new File(this.englishCorpusSideFile.getParentFile().getCanonicalPath() + "/nonbreaking_prefixes");
-        File dstPrefixesFile = new File(this.englishCorpusSideFile.getParentFile().getCanonicalPath() + "/nonbreaking_prefixes/nonbreaking_prefix.en");
+        //Replace englishCorpusSideFile with engResult
+        //    and foreignCorpusSideFile with forResult
+        // 0) Prepare necessary info about output file
+        String engFileName = englishCorpusSideFile.getName();
+        String forFileName = foreignCorpusSideFile.getName();
+        String engFilePath = englishCorpusSideFile.getCanonicalPath();
+        String forFilePath = foreignCorpusSideFile.getCanonicalPath();
 
-        dstTokFile.delete();
-        dstLowFile.delete();
-        dstPrefixesFile.delete();
-        dstPrefixesDir.delete();
-        Files.copy(srcTokFilePath, dstTokFile.toPath());
-        Files.copy(srcLowFilePath, dstLowFile.toPath());
-        dstPrefixesDir.mkdir();
-        Files.copy(prefixFilePath, dstPrefixesFile.toPath());
-
-        String englishCorpusSideFileName = englishCorpusSideFile.getName();
-        String foreignCorpusSideFileName = foreignCorpusSideFile.getName();
-
-        String outputEnglishFilePath = englishCorpusSideFile.getParentFile().getCanonicalPath() + "/" + englishCorpusSideFileName + ".tok" + "." + englishFileNameSuffix;
-        String outputForeignFilePath = foreignCorpusSideFile.getParentFile().getCanonicalPath() + "/" + foreignCorpusSideFileName + ".tok" + "." + foreignFileNameSuffix;
-
-        String englishCmd = "cat" + " " + this.englishCorpusSideFile.getCanonicalPath() + " | " + dstTokFile.getCanonicalPath() + " -l " + "en" + " | " + dstLowFile.getCanonicalPath() + " > " + outputEnglishFilePath;
-        String foreignCmd = "cat" + " " + this.foreignCorpusSideFile.getCanonicalPath() + " | " + dstTokFile.getCanonicalPath() + " -l " + "en" + " | " + dstLowFile.getCanonicalPath() + " > " + outputForeignFilePath;
-
-        Runtime runtime = Runtime.getRuntime();
-
-        dstTokFile.setExecutable(true);
-        dstLowFile.setExecutable(true);
-
-        String[] eng_cmd = {"/bin/sh","-c",englishCmd};
-        String[] for_cmd = {"/bin/sh","-c",foreignCmd};
-        Process engProcess = runtime.exec(eng_cmd);
-        Process forProcess = runtime.exec(for_cmd);
-
-        engProcess.waitFor();
-        forProcess.waitFor();
-
-        if (engProcess.exitValue() != 0) {
-            Utilities.printOutput(engProcess);
-            throw new Exception("English-corpus side tokenization exception, command did not return 0.");
-        }
-        if (forProcess.exitValue() != 0) {
-            Utilities.printOutput(forProcess);
-            throw new Exception("Foreign-corpus side tokenization exception, command did not return 0.");
-        }
-
-        //Firstly remove originals
+        // 1) Remove old files
         englishCorpusSideFile.delete();
         foreignCorpusSideFile.delete();
-        //Then rename tokenized to original names.
-        renameFile(outputEnglishFilePath, englishCorpusSideFileName);
-        renameFile(outputForeignFilePath, foreignCorpusSideFileName);
 
-        englishCorpusSideFile = new File(englishFilePath);
-        foreignCorpusSideFile = new File(foreignFilePath);
+        // 2) Give old files' names to new files
+        renameFile(engResult.getCanonicalPath(), engFileName);
+        renameFile(forResult.getCanonicalPath(), forFileName);
 
-        dstTokFile.delete();
-        dstLowFile.delete();
-        dstPrefixesFile.delete();
-        dstPrefixesDir.delete();
+        // 3) Update references to new files
+        englishCorpusSideFile = new File(engFilePath);
+        foreignCorpusSideFile = new File(forFilePath);
+    }
+
+    private File tokenizeFile(File inputFile) {
+        File outputFileDirectory = inputFile.getParentFile();
+        String outputFileName = inputFile.getName()+".temp";
+
+        File outputFile = new File(outputFileDirectory, outputFileName);
+
+        try (BufferedReader in = new BufferedReader(new FileReader(inputFile.getCanonicalPath()));
+             PrintWriter out = new PrintWriter(outputFile)) {
+
+            String currentLine;
+            while ((currentLine = in.readLine()) != null) {
+                //process currentLine
+                currentLine = currentLine.toLowerCase().replaceAll("\\p{P}", "").replaceAll(" +", " ").trim();
+
+                //write to output
+                out.write(currentLine+"\n");
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return outputFile;
     }
 }
