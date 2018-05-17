@@ -139,7 +139,7 @@ public class Decoder {
         decode_args[8] = "-threads";
         decode_args[9] = "2";
         decode_args[10] = "-reordering-model";
-        decode_args[11] = "hierarchical" + " " + reorderingModelFilePath + " " + "msd2-bidirectional-fe";
+        decode_args[11] = "hierarchical" + " " + reorderingModelFilePath + " " + "msd2-bidirectional-fe" + " hierarchical hierarchical bin";
         decode_args[12] = iniFilePath;
 
         return decode_args;
@@ -196,7 +196,7 @@ public class Decoder {
         decode_args[8] = "-threads";
         decode_args[9] = "2";
         decode_args[10] = "-reordering-model";
-        decode_args[11] = "hierarchical" + " " + reorderingModelFilePath + " " + "msd2-bidirectional-fe";
+        decode_args[11] = "hierarchical" + " " + reorderingModelFilePath + " " + "msd2-bidirectional-fe" + " hierarchical hierarchical bin";
         decode_args[12] = "-text";
         decode_args[13] = toTranslatePath;
         decode_args[14] = iniFilePath;
