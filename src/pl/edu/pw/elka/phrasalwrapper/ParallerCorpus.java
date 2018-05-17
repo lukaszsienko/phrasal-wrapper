@@ -16,10 +16,23 @@ public class ParallerCorpus {
     private String foreignFilePath;
     private String englishFileNameSuffix;
     private String foreignFileNameSuffix;
+    private String englishNonParallerCorpusPath;
     private File englishCorpusSideFile;
     private File foreignCorpusSideFile;
+    private File englishNonParallerCorpusFile;
 
     private String pathToModelsFolder;
+
+    public ParallerCorpus(String englishFilePath, String foreignFilePath, String englishNonParallerCorpusPath) throws IOException {
+        this(englishFilePath, foreignFilePath);
+
+        this.englishNonParallerCorpusFile = new File(englishNonParallerCorpusPath.trim());
+        if (this.englishNonParallerCorpusFile.exists() == false) {
+            System.out.println("English-only/non-paraller corpus file path: "+englishNonParallerCorpusPath.trim());
+            throw new FileNotFoundException("Cannot find the file of English-only/non-paraller corpus at specified path. Check specified file path and name.");
+        }
+        this.englishNonParallerCorpusPath = this.englishNonParallerCorpusFile.getCanonicalPath();
+    }
 
     public ParallerCorpus(String englishFilePath, String foreignFilePath) throws IOException {
         this.englishCorpusSideFile = new File(englishFilePath.trim());
@@ -78,6 +91,10 @@ public class ParallerCorpus {
         return foreignFileNameSuffix;
     }
 
+    public String getEnglishNonParallerCorpusPath() {
+        return englishNonParallerCorpusPath;
+    }
+
     public String getPathToModelsFolder() {
         return pathToModelsFolder;
     }
@@ -105,6 +122,18 @@ public class ParallerCorpus {
         // 3) Update references to new files
         englishCorpusSideFile = new File(engFilePath);
         foreignCorpusSideFile = new File(forFilePath);
+
+        //Do the same for english-only corpus if necessary
+        if (englishNonParallerCorpusFile != null) {
+            File engCorpusResult = tokenizeFile(englishNonParallerCorpusFile);
+
+            String fileName = englishNonParallerCorpusFile.getName();
+            String filePath = englishNonParallerCorpusFile.getCanonicalPath();
+
+            englishNonParallerCorpusFile.delete();
+            renameFile(engCorpusResult.getCanonicalPath(), fileName);
+            englishNonParallerCorpusFile = new File(filePath);
+        }
     }
 
     private File tokenizeFile(File inputFile) {

@@ -5,8 +5,8 @@ package pl.edu.pw.elka.phrasalwrapper;
  */
 public class Example {
 
-    public static void exampleUseCase(String englishFilePath, String foreignFilePath) throws Exception {
-        ParallerCorpus corpus = new ParallerCorpus(englishFilePath, foreignFilePath);
+    public static void exampleUseCase(String englishFilePath, String foreignFilePath, String englishOnlyCorpusFilePath) throws Exception {
+        ParallerCorpus corpus = new ParallerCorpus(englishFilePath, foreignFilePath, englishOnlyCorpusFilePath);
         corpus.tokenize();
 
         WordAlignmentModel alignmentModel = new WordAlignmentModel(corpus);
@@ -24,11 +24,13 @@ public class Example {
 
     public static void main(String[] args) throws Exception {
         /*String englishFilePath = "/home/lsienko/Pobrane/test/europarl-v7.pl-en.en";
-        String foreignFilePath = "/home/lsienko/Pobrane/test/europarl-v7.pl-en.pl";*/
+        String foreignFilePath = "/home/lsienko/Pobrane/test/europarl-v7.pl-en.pl";
+        String englishOnlyCorpusFilePath = "/home/lsienko/Pobrane/test/europarl-v7.en";*/
 
         String englishFilePath = args[0];
         String foreignFilePath = args[1];
-        exampleUseCase(englishFilePath, foreignFilePath);
+        String englishOnlyCorpusFilePath = args[2];
+        exampleUseCase(englishFilePath, foreignFilePath, englishOnlyCorpusFilePath);
     }
 }
 

@@ -11,13 +11,16 @@ import java.lang.reflect.Field;
 public class LanguageModel {
 
     private String ngram;
-    private String englishSideOfCorpusFilePath;
+    private String englishCorpusFilesPaths;
     private String modelFileName;
     private String outputFolder;
 
     public LanguageModel(int ngram, ParallerCorpus parallerCorpus) {
         this.ngram = String.valueOf(ngram);
-        this.englishSideOfCorpusFilePath = parallerCorpus.getEnglishFilePath();
+        this.englishCorpusFilesPaths = parallerCorpus.getEnglishFilePath();
+        if (parallerCorpus.getEnglishNonParallerCorpusPath() != null && parallerCorpus.getEnglishNonParallerCorpusPath().isEmpty() == false) {
+            this.englishCorpusFilesPaths = this.englishCorpusFilesPaths + " " + parallerCorpus.getEnglishNonParallerCorpusPath();
+        }
         this.modelFileName = this.ngram + "gm";
         this.outputFolder = parallerCorpus.getPathToModelsFolder()+"/language_model";
     }
@@ -49,7 +52,7 @@ public class LanguageModel {
             lmplzExecutable.setExecutable(true);
             buildBinaryExecutable.setExecutable(true);
 
-            String buildCommand = lmplzExecutable.getCanonicalPath()+" -o " + ngram + " < " + englishSideOfCorpusFilePath + " > "+textModelPath;
+            String buildCommand = lmplzExecutable.getCanonicalPath()+" -o " + ngram + " < " + englishCorpusFilesPaths + " > "+textModelPath;
             String transferCommand = buildBinaryExecutable.getCanonicalPath()+" trie "+outputFolder+"/"+textModelFileName+" "+outputFolder+"/"+getModelBinaryFileName();
 
             Runtime runtime = Runtime.getRuntime();
