@@ -40,7 +40,7 @@ public class TranslationModel {
         File translation_model_folder = new File(outputFolder);
         String translation_model_path = translation_model_folder.getCanonicalPath();
 
-        String[] phrase_extract_args = new String[18];
+        String[] phrase_extract_args = new String[28];
         phrase_extract_args[0] = "-threads";
         phrase_extract_args[1] = "1";
         phrase_extract_args[2] = "-inputDir";
@@ -56,9 +56,19 @@ public class TranslationModel {
         phrase_extract_args[12] = "-symmetrization";
         phrase_extract_args[13] = "grow-diag";
         phrase_extract_args[14] = "-phiFilter";
-        phrase_extract_args[15] = "1e-4";
+        phrase_extract_args[15] = "1e-3";
         phrase_extract_args[16] = "-maxELen";
-        phrase_extract_args[17] = "5";
+        phrase_extract_args[17] = "4";
+        phrase_extract_args[18] = "-maxLen";
+        phrase_extract_args[19] = "4";
+        phrase_extract_args[20] = "-maxLenE";
+        phrase_extract_args[21] = "4";
+        phrase_extract_args[22] = "-maxLenF";
+        phrase_extract_args[23] = "4";
+        phrase_extract_args[24] = "-maxELenE";
+        phrase_extract_args[25] = "4";
+        phrase_extract_args[26] = "-maxELenF";
+        phrase_extract_args[27] = "4";
 
         System.setProperty("ShowPhraseRestriction", "true");
 
