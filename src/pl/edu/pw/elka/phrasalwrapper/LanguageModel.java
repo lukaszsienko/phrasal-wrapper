@@ -61,14 +61,14 @@ public class LanguageModel {
             Process buildTextModel = runtime.exec(build_cmd);
             buildTextModel.waitFor();
             if (buildTextModel.exitValue() != 0) {
-                Utilities.printOutput(buildTextModel);
+                Utilities.printBashProcessOutput(buildTextModel);
                 throw new Exception("Language model building exception, build command did not return 0.");
             }
 
             Process transferToBinaryModel = runtime.exec(transferCommand);
             transferToBinaryModel.waitFor();
             if (transferToBinaryModel.exitValue() != 0) {
-                Utilities.printOutput(transferToBinaryModel);
+                Utilities.printBashProcessOutput(transferToBinaryModel);
                 throw new Exception("Language model building exception, transfer command did not return 0.");
             }
         } catch (Throwable t) {

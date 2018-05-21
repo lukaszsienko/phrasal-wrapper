@@ -16,6 +16,11 @@ import java.util.jar.JarFile;
 
 public class Utilities {
 
+    public static void renameFile(String absoluteFilePath, String newName) throws IOException {
+        Path source = Paths.get(absoluteFilePath);
+        Files.move(source, source.resolveSibling(newName));
+    }
+
     public static Path getResourcePath(String pathToResourceInsideJar) throws IOException {
         String pathToJar = Utilities.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         String decodedPathToJar = URLDecoder.decode(pathToJar, "UTF-8");
@@ -68,7 +73,7 @@ public class Utilities {
         }
     }
 
-    public static void printOutput(Process process) throws IOException {
+    public static void printBashProcessOutput(Process process) throws IOException {
         BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
         BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
 
@@ -103,10 +108,6 @@ public class Utilities {
 
     public static void enableSystemExitCall() {
         System.setSecurityManager( null ) ;
-    }
-
-    public static String cleanTextBeforeProcessing(String text) {
-        return text.toLowerCase().replaceAll("\\p{P}", "").replaceAll(" +", " ").trim();
     }
 
 }
