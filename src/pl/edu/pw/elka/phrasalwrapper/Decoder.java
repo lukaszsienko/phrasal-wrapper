@@ -33,6 +33,11 @@ public class Decoder {
         this.tunerOutputFilePath = tuner.getTunerFinalWeightsFilePath();
     }
 
+    public Decoder(LanguageModel languageModel, TranslationModel translationModel, String tunerOutputFilePath) throws IOException{
+        this(languageModel, translationModel);
+        this.tunerOutputFilePath = tunerOutputFilePath;
+    }
+
     public Decoder(LanguageModel languageModel, TranslationModel translationModel) throws IOException {
         this.languageModel = languageModel; //for loading kenLM library if not declared by user in -Djava.library.path=...
 
