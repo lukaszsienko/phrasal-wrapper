@@ -49,7 +49,6 @@ public class CorpusSplitterTrainTune {
                 }
 
                 lineCounter = (lineCounter + 1) % EVERY_N_TH_GOES_TO_TUNING_SET;
-                System.out.println(lineCounter);
             }
 
         } catch (IOException e) {
