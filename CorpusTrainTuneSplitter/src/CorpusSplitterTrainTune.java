@@ -1,10 +1,10 @@
 import java.io.*;
 
-public class Main {
+public class CorpusSplitterTrainTune {
 
-    private final static int EVERY_N_TH_GOES_TO_TUNING_SET = 10;
-    private final static String englishFilePath = "/home/lsienko/Pobrane/test/europarl-v7.pl-en.en";
-    private final static String foreignFilePath = "/home/lsienko/Pobrane/test/europarl-v7.pl-en.pl";
+    private final static int EVERY_N_TH_GOES_TO_TUNING_SET = 14;
+    private final static String englishFilePath = "/home/lsienko/Pobrane/NOWE_KORPUSY_ORG/parallel/one_file/corpus.en";
+    private final static String foreignFilePath = "/home/lsienko/Pobrane/NOWE_KORPUSY_ORG/parallel/one_file/corpus.pl";
 
     public static void main(String[] args) {
         File engFile = new File(englishFilePath);
@@ -49,6 +49,7 @@ public class Main {
                 }
 
                 lineCounter = (lineCounter + 1) % EVERY_N_TH_GOES_TO_TUNING_SET;
+                System.out.println(lineCounter);
             }
 
         } catch (IOException e) {
