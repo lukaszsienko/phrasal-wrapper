@@ -34,7 +34,7 @@ public class WordAlignmentModel {
         }
         outputDirectory.mkdir();
 
-        String [] defaultArgs = new String[44];
+        String [] defaultArgs = new String[46];
         defaultArgs[0] = "-Main.forwardModels";
         defaultArgs[1] = "MODEL1";
         defaultArgs[2] = "HMM";
@@ -54,7 +54,7 @@ public class WordAlignmentModel {
         defaultArgs[16] = "-Main.saveParams";
         defaultArgs[17] = "true";
         defaultArgs[18] = "-EMWordAligner.numThreads";
-        defaultArgs[19] = "1";
+        defaultArgs[19] = "5";
         defaultArgs[20] = "-log.msPerLine";
         defaultArgs[21] = "10000";
         defaultArgs[22] = "-Main.alignTraining";
@@ -79,6 +79,8 @@ public class WordAlignmentModel {
         defaultArgs[41] = "true";
         defaultArgs[42] = "-exec.overwriteExecDir";
         defaultArgs[43] = "true";
+        defaultArgs[44] = "-Evaluator.writeGIZA";
+        defaultArgs[45] = "true";
 
         Utilities.forbidSystemExitCall();
 
