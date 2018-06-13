@@ -1,0 +1,32 @@
+#!/bin/bash
+# $1 -> sciezka do training.for
+# $2 -> sciezka do training.eng
+# $3 -> output folder align_for_eng
+# $4 -> output folder align_eng_for
+
+# Ustawienie flagi executable
+chmod +x ./plain2snt.out
+chmod +x ./mkcls
+chmod +x ./snt2cooc.out
+chmod +x ./GIZA++
+
+# "Etap 1/7: przygotowanie slownikow (PL i EN)..."
+./plain2snt.out $1 $2
+
+# "Etap 2/7: przygotowanie plikow klas (PL)..."
+./mkcls -p$1 -Vtraining.for.vcb.classes -n2
+
+# "Etap 3/7: przygotowanie plikow klas (EN)..."
+./mkcls -p$2 -Vtraining.eng.vcb.classes -n2
+
+# "Etap 4/7 przygotowanie coocurrence file (PL -> EN)..."
+./snt2cooc.out training.for.vcb training.eng.vcb training.for_training.eng.snt > cooc_for_eng.cooc
+
+# "Etap 5/7 przygotowanie coocurrence file (EN -> PL)..."
+./snt2cooc.out training.eng.vcb training.for.vcb training.eng_training.for.snt > cooc_eng_for.cooc
+
+# "Etap 6/7 wyrownanie (PL -> EN)..."
+./GIZA++ -S training.for.vcb -T training.eng.vcb -C training.for_training.eng.snt -CoocurrenceFile cooc_for_eng.cooc -o alignment -outputpath $3
+
+# "Etap 7/7 wyrownanie (EN -> PL)..."
+./GIZA++ -S training.eng.vcb -T training.for.vcb -C training.eng_training.for.snt -CoocurrenceFile cooc_eng_for.cooc -o alignment -outputpath $4

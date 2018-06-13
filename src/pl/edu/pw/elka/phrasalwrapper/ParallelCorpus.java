@@ -2,12 +2,12 @@ package pl.edu.pw.elka.phrasalwrapper;
 
 import java.io.*;
 
-public class ParallerCorpus {
+public class ParallelCorpus {
 
     private TextCorpus foreignSide;
     private TextCorpus englishSide;
 
-    public ParallerCorpus(String foreignFilePath, String englishFilePath, String corpusName) throws IOException {
+    public ParallelCorpus(String foreignFilePath, String englishFilePath, String corpusName) throws IOException {
         foreignSide = new TextCorpus(foreignFilePath, corpusName + ".for");
         englishSide = new TextCorpus(englishFilePath, corpusName + ".eng");
     }

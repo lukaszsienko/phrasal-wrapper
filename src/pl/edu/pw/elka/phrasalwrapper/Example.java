@@ -6,14 +6,14 @@ import pl.edu.pw.elka.phrasalwrapper.word_alignment.BerkeleyWordAlignmentModel;
 
 public class Example {
 
-    public static void exampleUseCase(String foreignFilePath, String englishFilePath, String englishOnlyCorpusFilePath, String foreignPartOfParallerTuningCorpusPath, String englishPartOfParallerTuningCorpusPath, String modelOutputDir) throws Exception {
+    public static void exampleUseCase(String foreignFilePath, String englishFilePath, String englishOnlyCorpusFilePath, String foreignPartOfParallelTuningCorpusPath, String englishPartOfParallelTuningCorpusPath, String modelOutputDir) throws Exception {
         ModelsOutputDirectory modelsOutputDirectory = new ModelsOutputDirectory(modelOutputDir, false);
 
         final int EVERY_N_TH_GOES_TO_TUNING_SET = 14;
         CorpusPreparer corpusPreparer = new CorpusPreparer(foreignFilePath, englishFilePath);
         corpusPreparer.splitCorpusIntoTrainAndTuneParts(EVERY_N_TH_GOES_TO_TUNING_SET);
-        ParallerCorpus trainingCorpus = corpusPreparer.getTrainingCorpus();
-        ParallerCorpus tuningCorpus = corpusPreparer.getTuningCorpus();
+        ParallelCorpus trainingCorpus = corpusPreparer.getTrainingCorpus();
+        ParallelCorpus tuningCorpus = corpusPreparer.getTuningCorpus();
 
         TextCorpus englishMonolingualCorpus = new TextCorpus(englishOnlyCorpusFilePath);
         englishMonolingualCorpus.tokenize();
@@ -35,9 +35,9 @@ public class Example {
         String foreignFilePath = args[0];
         String englishFilePath = args[1];
         String englishOnlyCorpusFilePath = args[2];
-        String foreignPartOfParallerTuningCorpusPath = args[3];
-        String englishPartOfParallerTuningCorpusPath = args[4];
+        String foreignPartOfParallelTuningCorpusPath = args[3];
+        String englishPartOfParallelTuningCorpusPath = args[4];
         String modelOutputDir = args[5];
-        exampleUseCase(foreignFilePath, englishFilePath, englishOnlyCorpusFilePath, foreignPartOfParallerTuningCorpusPath, englishPartOfParallerTuningCorpusPath, modelOutputDir);
+        exampleUseCase(foreignFilePath, englishFilePath, englishOnlyCorpusFilePath, foreignPartOfParallelTuningCorpusPath, englishPartOfParallelTuningCorpusPath, modelOutputDir);
     }
 }

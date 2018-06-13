@@ -7,8 +7,8 @@ public class CorpusPreparer {
     private File forSideOfParallelCorpus;
     private File engSideOfParallelCorpus;
 
-    private ParallerCorpus trainingCorpus;
-    private ParallerCorpus tuningCorpus;
+    private ParallelCorpus trainingCorpus;
+    private ParallelCorpus tuningCorpus;
 
     public CorpusPreparer(String foreignPartFilePath, String englishPartFilePath) throws FileNotFoundException {
         forSideOfParallelCorpus = new File(foreignPartFilePath.trim());
@@ -85,8 +85,8 @@ public class CorpusPreparer {
             e.printStackTrace();
         }
 
-        trainingCorpus = new ParallerCorpus(forTrainFile.getCanonicalPath(), engTrainFile.getCanonicalPath(), "training");
-        tuningCorpus = new ParallerCorpus(forTuneFile.getCanonicalPath(), engTuneFile.getCanonicalPath(), "tuning");
+        trainingCorpus = new ParallelCorpus(forTrainFile.getCanonicalPath(), engTrainFile.getCanonicalPath(), "training");
+        tuningCorpus = new ParallelCorpus(forTuneFile.getCanonicalPath(), engTuneFile.getCanonicalPath(), "tuning");
     }
 
     private File makeNewDirectory(File location, String dirName) throws IOException {
@@ -98,11 +98,11 @@ public class CorpusPreparer {
         return directory;
     }
 
-    public ParallerCorpus getTrainingCorpus() {
+    public ParallelCorpus getTrainingCorpus() {
         return trainingCorpus;
     }
 
-    public ParallerCorpus getTuningCorpus() {
+    public ParallelCorpus getTuningCorpus() {
         return tuningCorpus;
     }
 }

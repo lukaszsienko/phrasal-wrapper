@@ -4,7 +4,7 @@ import java.io.*;
 
 public class Tokenizer {
 
-    private Tokenizer() {};
+    private Tokenizer() {}
 
     public static String cleanText(String text) {
         return text.toLowerCase().replaceAll("\\p{P}", " ").replaceAll(" +", " ").trim();

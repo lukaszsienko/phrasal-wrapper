@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class TranslationTuner {
 
-    private ParallerCorpus tuningCorpus;
+    private ParallelCorpus tuningCorpus;
     private LanguageModel languageModel;
     private TranslationModel translationModel;
     private ModelsOutputDirectory modelsOutputDirectory;
@@ -21,7 +21,7 @@ public class TranslationTuner {
     private String outputDirectoryPath;
     private String tunerFinalWeightsFilePath;
 
-    public TranslationTuner(ParallerCorpus tuningCorpus, LanguageModel languageModel, TranslationModel translationModel, ModelsOutputDirectory modelsOutputDirectory) throws IOException {
+    public TranslationTuner(ParallelCorpus tuningCorpus, LanguageModel languageModel, TranslationModel translationModel, ModelsOutputDirectory modelsOutputDirectory) {
         this.tuningCorpus = tuningCorpus;
         this.languageModel = languageModel;
         this.translationModel = translationModel;
@@ -78,7 +78,7 @@ public class TranslationTuner {
         Map<String, String> parameters = getParametersMap();
         String iniFilePath = outputDirectoryPath+"/phrasal.ini";
 
-        try (PrintWriter output = new PrintWriter(iniFilePath);){
+        try (PrintWriter output = new PrintWriter(iniFilePath)){
             for (Map.Entry<String, String> entry : parameters.entrySet())
             {
                 output.write("\n");
