@@ -38,24 +38,6 @@ public class TextCorpus {
         file = Tokenizer.tokenizeFile(file);
     }
 
-    /*public void changeCorpusFileExtension(String newFileExtension) throws IOException {
-        String presentExtension = FilenameUtils.getExtension(filePath);
-        String fileParent = file.getParentFile().getCanonicalPath();
-        String newFilename = "";
-        if (presentExtension.equals("")) {
-            newFilename = file.getName() + "." + newFileExtension;
-            Utilities.renameFile(filePath, newFilename);
-        } else {
-            int dotIdx = file.getName().indexOf(".");
-            String presentFilenameWithoutExtension = file.getName().substring(0, dotIdx);
-            newFilename = presentFilenameWithoutExtension + "." + newFileExtension;
-            Utilities.renameFile(filePath, newFilename);
-        }
-        file = new File(fileParent + "/" + newFilename);
-        filePath = file.getCanonicalPath();
-        filenameExtension = newFileExtension;
-    }*/
-
     public String getCorpusFilePath() {
         return filePath;
     }

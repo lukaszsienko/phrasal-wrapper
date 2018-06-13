@@ -10,17 +10,7 @@ public class ParallerCorpus {
     public ParallerCorpus(String foreignFilePath, String englishFilePath, String corpusName) throws IOException {
         foreignSide = new TextCorpus(foreignFilePath, corpusName + ".for");
         englishSide = new TextCorpus(englishFilePath, corpusName + ".eng");
-        //addLangExtensionsToCorpusFiles();
     }
-
-    /*private void addLangExtensionsToCorpusFiles() throws IOException {
-        String foreignFileNameEntension = foreignSide.getCorpusFilenameExtension();
-        String englishFileNameExtension = englishSide.getCorpusFilenameExtension();
-        if (englishFileNameExtension.equals("") || foreignFileNameEntension.equals("") || englishFileNameExtension.equals(foreignFileNameEntension)) {
-            foreignSide.changeCorpusFileExtension("eng");
-            englishSide.changeCorpusFileExtension("for");
-        }
-    }*/
 
     public void tokenize() throws Exception {
         foreignSide.tokenize();
