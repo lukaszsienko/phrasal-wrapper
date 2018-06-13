@@ -1,26 +1,26 @@
-package pl.edu.pw.elka.phrasalwrapper;
+package pl.edu.pw.elka.phrasalwrapper.word_alignment;
 
 import edu.berkeley.nlp.wordAlignment.Main;
 import org.apache.commons.io.FileUtils;
+import pl.edu.pw.elka.phrasalwrapper.ModelsOutputDirectory;
+import pl.edu.pw.elka.phrasalwrapper.ParallerCorpus;
+import pl.edu.pw.elka.phrasalwrapper.Utilities;
 
 import java.io.File;
 import java.io.IOException;
 
-/**
- * Created by lsienko on 26.04.18.
- */
-public class WordAlignmentModel {
+public class BerkeleyWordAlignmentModel {
 
     private String inputFolderPath;
     private String outputFolderPath;
     private String englishFileNameSuffix;
     private String foreignFileNameSuffix;
 
-    public WordAlignmentModel(ParallerCorpus parallerCorpus) throws IOException {
+    public BerkeleyWordAlignmentModel(ParallerCorpus parallerCorpus, ModelsOutputDirectory modelsOutputDirectory) throws IOException {
         this.inputFolderPath = new File(parallerCorpus.getEnglishFilePath()).getParentFile().getCanonicalPath();
-        this.outputFolderPath = parallerCorpus.getPathToModelsFolder()+"/aligner_output";
-        this.englishFileNameSuffix = parallerCorpus.getEnglishFileNameSuffix();
-        this.foreignFileNameSuffix = parallerCorpus.getForeignFileNameSuffix();
+        this.outputFolderPath = modelsOutputDirectory.getCanonicalPathToOutputDir()+"/aligner_output";
+        this.englishFileNameSuffix = parallerCorpus.getEnglishFilenameExtension();
+        this.foreignFileNameSuffix = parallerCorpus.getForeignFilenameExtension();
     }
 
     public void runWordAlignmentProcess() throws IOException {

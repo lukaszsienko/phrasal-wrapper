@@ -2,6 +2,7 @@ package pl.edu.pw.elka.phrasalwrapper;
 
 import edu.stanford.nlp.mt.tune.OnlineTuner;
 import org.apache.commons.io.FileUtils;
+import pl.edu.pw.elka.phrasalwrapper.translation_model.TranslationModel;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,45 +13,25 @@ import java.util.Map;
 
 public class TranslationTuner {
 
-    private String englishPartOfParallerTuningCorpusPath;
-    private String foreignPartOfParallerTuningCorpusPath;
+    private ParallerCorpus tuningCorpus;
     private LanguageModel languageModel;
     private TranslationModel translationModel;
-
-    private File englishPartOfParallerTuningCorpusFile;
-    private File foreignPartOfParallerTuningCorpusFile;
+    private ModelsOutputDirectory modelsOutputDirectory;
 
     private String outputDirectoryPath;
     private String tunerFinalWeightsFilePath;
 
-    public TranslationTuner(String englishPartOfParallerTuningCorpusPath, String foreignPartOfParallerTuningCorpusPath, ParallerCorpus trainingCorpus, LanguageModel languageModel, TranslationModel translationModel) throws IOException {
-        this.englishPartOfParallerTuningCorpusFile = new File(englishPartOfParallerTuningCorpusPath.trim());
-        if (this.englishPartOfParallerTuningCorpusFile.exists() == false) {
-            System.out.println("English part of paraller tuning corpus file path: "+englishPartOfParallerTuningCorpusPath.trim());
-            throw new FileNotFoundException("Cannot find the file of english part of paraller tuning corpus at specified path. Check specified file path and name.");
-        }
-        this.englishPartOfParallerTuningCorpusPath = this.englishPartOfParallerTuningCorpusFile.getCanonicalPath();
-
-        this.foreignPartOfParallerTuningCorpusFile = new File(foreignPartOfParallerTuningCorpusPath.trim());
-        if (this.foreignPartOfParallerTuningCorpusFile.exists() == false) {
-            System.out.println("Foreign part of paraller tuning corpus file path: "+foreignPartOfParallerTuningCorpusPath.trim());
-            throw new FileNotFoundException("Cannot find the file of foreign part of paraller tuning corpus at specified path. Check specified file path and name.");
-        }
-        this.foreignPartOfParallerTuningCorpusPath = this.foreignPartOfParallerTuningCorpusFile.getCanonicalPath();
-
+    public TranslationTuner(ParallerCorpus tuningCorpus, LanguageModel languageModel, TranslationModel translationModel, ModelsOutputDirectory modelsOutputDirectory) throws IOException {
+        this.tuningCorpus = tuningCorpus;
         this.languageModel = languageModel;
         this.translationModel = translationModel;
+        this.modelsOutputDirectory = modelsOutputDirectory;
 
-        outputDirectoryPath = trainingCorpus.getPathToModelsFolder() + "/tuner_output";
-    }
-
-    public void tokenizeTuningCorpus() throws Exception {
-        Tokenizer.tokenizeFile(englishPartOfParallerTuningCorpusFile);
-        Tokenizer.tokenizeFile(foreignPartOfParallerTuningCorpusFile);
+        outputDirectoryPath = modelsOutputDirectory.getCanonicalPathToOutputDir() + "/tuner_output";
     }
 
     public void runTuning() throws Exception {
-        languageModel.extractAndLoadKenLMLibrary();
+        modelsOutputDirectory.reloadKenLMexecutables();
 
         File outputDirectory = new File(this.outputDirectoryPath);
         if (outputDirectory.exists()) {
@@ -68,8 +49,8 @@ public class TranslationTuner {
         exampleBinwtsFile.createNewFile();
 
         String[] tuning_args = new String[19];
-        tuning_args[0] = foreignPartOfParallerTuningCorpusPath;
-        tuning_args[1] = englishPartOfParallerTuningCorpusPath;
+        tuning_args[0] = tuningCorpus.getForeignFilePath();
+        tuning_args[1] = tuningCorpus.getEnglishFilePath();
         tuning_args[2] = iniFilePath;
         tuning_args[3] = exampleBinwtsFile.getCanonicalPath();
         tuning_args[4] = "-n";
@@ -93,11 +74,6 @@ public class TranslationTuner {
         tunerFinalWeightsFilePath = System.getProperty("user.dir")+"/tuning.online.final.binwts";
     }
 
-    /**
-     *
-     * @return canonical path to phrasal.ini file
-     * @throws FileNotFoundException
-     */
     private String buildPhrasalIniFile() throws FileNotFoundException {
         Map<String, String> parameters = getParametersMap();
         String iniFilePath = outputDirectoryPath+"/phrasal.ini";

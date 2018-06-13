@@ -6,6 +6,14 @@ public class Tokenizer {
 
     private Tokenizer() {};
 
+    public static String cleanText(String text) {
+        return text.toLowerCase().replaceAll("\\p{P}", " ").replaceAll(" +", " ").trim();
+    }
+
+    public static int getNumberOfTokens(String text) {
+        return text.split("\\s+").length;
+    }
+
     public static File tokenizeFile(File fileToTokenize) throws Exception {
         File tokenizeResultFile = tokenizeFileContents(fileToTokenize);
         return replaceExisitngFileWithOtherFileInTheSameDirectory(fileToTokenize, tokenizeResultFile);
@@ -22,7 +30,7 @@ public class Tokenizer {
 
             String currentLine;
             while ((currentLine = in.readLine()) != null) {
-                currentLine = cleanTextBeforeProcessing(currentLine);
+                currentLine = cleanText(currentLine);
                 out.write(currentLine+"\n");
             }
 
@@ -31,10 +39,6 @@ public class Tokenizer {
         }
 
         return outputFile;
-    }
-
-    public static String cleanTextBeforeProcessing(String text) {
-        return text.toLowerCase().replaceAll("\\p{P}", " ").replaceAll(" +", " ").trim();
     }
 
     private static File replaceExisitngFileWithOtherFileInTheSameDirectory(File existingFile, File newFile) throws Exception {

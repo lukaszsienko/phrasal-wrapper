@@ -16,9 +16,22 @@ import java.util.jar.JarFile;
 
 public class Utilities {
 
-    public static void renameFile(String absoluteFilePath, String newName) throws IOException {
+    public static String[] concatenateTables(String[] tab_1, String[] tab_2) {
+        String[] result = new String[tab_2.length + tab_1.length];
+        for (int i = 0; i < result.length; i++) {
+            if (i < tab_1.length) {
+                result[i] = tab_1[i];
+            } else {
+                result[i] = tab_2[i-tab_1.length];
+            }
+        }
+
+        return result;
+    }
+
+    public static Path renameFile(String absoluteFilePath, String newName) throws IOException {
         Path source = Paths.get(absoluteFilePath);
-        Files.move(source, source.resolveSibling(newName));
+        return Files.move(source, source.resolveSibling(newName));
     }
 
     public static Path getResourcePath(String pathToResourceInsideJar) throws IOException {

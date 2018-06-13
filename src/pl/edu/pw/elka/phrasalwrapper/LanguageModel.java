@@ -3,26 +3,26 @@ package pl.edu.pw.elka.phrasalwrapper;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-import java.lang.reflect.Field;
 
-/**
- * Created by lsienko on 26.04.18.
- */
 public class LanguageModel {
 
     private String ngram;
     private String englishCorpusFilesPaths;
+    private File kenLMextractedLibrary;
     private String modelFileName;
     private String outputFolder;
 
-    public LanguageModel(int ngram, ParallerCorpus parallerCorpus) {
+    public LanguageModel(int ngram, ParallerCorpus parallerCorpus, TextCorpus additionalText, ModelsOutputDirectory modelsOutputDirectory) {
+        this(ngram, parallerCorpus, modelsOutputDirectory);
+        this.englishCorpusFilesPaths = this.englishCorpusFilesPaths + " " + additionalText.getCorpusFilePath();
+    }
+
+    public LanguageModel(int ngram, ParallerCorpus parallerCorpus, ModelsOutputDirectory modelsOutputDirectory) {
         this.ngram = String.valueOf(ngram);
         this.englishCorpusFilesPaths = parallerCorpus.getEnglishFilePath();
-        if (parallerCorpus.getEnglishNonParallerCorpusPath() != null && parallerCorpus.getEnglishNonParallerCorpusPath().isEmpty() == false) {
-            this.englishCorpusFilesPaths = this.englishCorpusFilesPaths + " " + parallerCorpus.getEnglishNonParallerCorpusPath();
-        }
         this.modelFileName = this.ngram + "gm";
-        this.outputFolder = parallerCorpus.getPathToModelsFolder()+"/language_model";
+        this.outputFolder = modelsOutputDirectory.getCanonicalPathToOutputDir()+"/language_model";
+        this.kenLMextractedLibrary = modelsOutputDirectory.getKenLMextractedLibrary();
     }
 
     public String getModelBinaryFileName() {
@@ -41,13 +41,11 @@ public class LanguageModel {
             }
             outputDirectory.mkdir();
 
-            File dest = extractAndLoadKenLMLibrary();
-
             String textModelFileName = modelFileName+".arpa";
             String textModelPath = outputFolder+"/"+textModelFileName;
 
-            File lmplzExecutable = new File(dest.getCanonicalPath()+"/kenlm/bin/lmplz");
-            File buildBinaryExecutable = new File(dest.getCanonicalPath()+"/kenlm/bin/build_binary");
+            File lmplzExecutable = new File(this.kenLMextractedLibrary.getCanonicalPath()+"/kenlm/bin/lmplz");
+            File buildBinaryExecutable = new File(this.kenLMextractedLibrary.getCanonicalPath()+"/kenlm/bin/build_binary");
 
             lmplzExecutable.setExecutable(true);
             buildBinaryExecutable.setExecutable(true);
@@ -73,27 +71,6 @@ public class LanguageModel {
             }
         } catch (Throwable t) {
             t.printStackTrace();
-        }
-    }
-
-    public File extractAndLoadKenLMLibrary() throws Exception {
-        File dest = new File(outputFolder+"/kenLanguageModel");
-        if (dest.exists()) {
-            FileUtils.deleteDirectory(dest);
-        }
-        Utilities.extractDirectory("/kenLanguageModel", dest.getParentFile().getCanonicalPath());
-
-        loadLibrary(dest.getCanonicalPath());
-        return dest;
-    }
-
-    @Deprecated
-    private void loadLibrary(String libraryCanonicalPath) throws Exception {
-        if (!System.getProperty("java.library.path").contains(libraryCanonicalPath)) {
-            System.setProperty("java.library.path", System.getProperty("java.library.path")+":"+libraryCanonicalPath);
-            Field fieldSysPath = ClassLoader.class.getDeclaredField( "sys_paths" );
-            fieldSysPath.setAccessible( true );
-            fieldSysPath.set( null, null );
         }
     }
 }
