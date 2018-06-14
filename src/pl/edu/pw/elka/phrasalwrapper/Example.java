@@ -1,13 +1,14 @@
 package pl.edu.pw.elka.phrasalwrapper;
 
+import pl.edu.pw.elka.phrasalwrapper.model_persistence.ModelsPersistence;
 import pl.edu.pw.elka.phrasalwrapper.translation_model.BerkeleyTranslationModel;
 import pl.edu.pw.elka.phrasalwrapper.translation_model.TranslationModel;
 import pl.edu.pw.elka.phrasalwrapper.word_alignment.BerkeleyWordAlignmentModel;
 
 public class Example {
 
-    public static void exampleUseCase(String foreignFilePath, String englishFilePath, String englishOnlyCorpusFilePath, String foreignPartOfParallelTuningCorpusPath, String englishPartOfParallelTuningCorpusPath, String modelOutputDir) throws Exception {
-        ModelsOutputDirectory modelsOutputDirectory = new ModelsOutputDirectory(modelOutputDir, false);
+    public static void exampleUseCase(String foreignFilePath, String englishFilePath, String englishOnlyCorpusFilePath, String modelOutputDirPath) throws Exception {
+        ModelsPersistence modelsPersistence =  ModelsPersistence.createEmptyModelsDirectory(modelOutputDirPath, "models");
 
         final int EVERY_N_TH_GOES_TO_TUNING_SET = 14;
         CorpusPreparer corpusPreparer = new CorpusPreparer(foreignFilePath, englishFilePath);
@@ -18,26 +19,27 @@ public class Example {
         TextCorpus englishMonolingualCorpus = new TextCorpus(englishOnlyCorpusFilePath);
         englishMonolingualCorpus.tokenize();
 
-        BerkeleyWordAlignmentModel alignmentModel = new BerkeleyWordAlignmentModel(trainingCorpus, modelsOutputDirectory);
-        alignmentModel.runWordAlignmentProcess();
-
-        LanguageModel languageModel = new LanguageModel(5, trainingCorpus, englishMonolingualCorpus, modelsOutputDirectory);
+        LanguageModel languageModel = new LanguageModel(5, trainingCorpus, englishMonolingualCorpus, modelsPersistence);
         languageModel.buildLanguageModel();
 
-        TranslationModel translationModel = new BerkeleyTranslationModel(alignmentModel, modelsOutputDirectory);
+        BerkeleyWordAlignmentModel alignmentModel = new BerkeleyWordAlignmentModel(trainingCorpus, modelsPersistence);
+        alignmentModel.runWordAlignmentProcess();
+
+        TranslationModel translationModel = new BerkeleyTranslationModel(alignmentModel, modelsPersistence);
         translationModel.buildTranslationModel();
 
-        TranslationTuner tuner = new TranslationTuner(tuningCorpus, languageModel, translationModel, modelsOutputDirectory);
+        TranslationTuner tuner = new TranslationTuner(tuningCorpus, modelsPersistence);
         tuner.runTuning();
+
+        Decoder decoder = new Decoder(modelsPersistence);
+        decoder.translateSentence("Ann has a cat");
     }
 
     public static void main(String[] args) throws Exception {
         String foreignFilePath = args[0];
         String englishFilePath = args[1];
         String englishOnlyCorpusFilePath = args[2];
-        String foreignPartOfParallelTuningCorpusPath = args[3];
-        String englishPartOfParallelTuningCorpusPath = args[4];
-        String modelOutputDir = args[5];
-        exampleUseCase(foreignFilePath, englishFilePath, englishOnlyCorpusFilePath, foreignPartOfParallelTuningCorpusPath, englishPartOfParallelTuningCorpusPath, modelOutputDir);
+        String modelOutputDirPath = args[3];
+        exampleUseCase(foreignFilePath, englishFilePath, englishOnlyCorpusFilePath, modelOutputDirPath);
     }
 }

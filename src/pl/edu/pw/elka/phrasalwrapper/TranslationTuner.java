@@ -1,11 +1,11 @@
 package pl.edu.pw.elka.phrasalwrapper;
 
 import edu.stanford.nlp.mt.tune.OnlineTuner;
-import org.apache.commons.io.FileUtils;
-import pl.edu.pw.elka.phrasalwrapper.translation_model.TranslationModel;
+import pl.edu.pw.elka.phrasalwrapper.model_persistence.ModelDirectory;
+import pl.edu.pw.elka.phrasalwrapper.model_persistence.ModelFile;
+import pl.edu.pw.elka.phrasalwrapper.model_persistence.ModelsPersistence;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.LinkedHashMap;
@@ -14,34 +14,24 @@ import java.util.Map;
 public class TranslationTuner {
 
     private ParallelCorpus tuningCorpus;
-    private LanguageModel languageModel;
-    private TranslationModel translationModel;
-    private ModelsOutputDirectory modelsOutputDirectory;
-
+    private ModelsPersistence modelsPersistence;
     private String outputDirectoryPath;
-    private String tunerFinalWeightsFilePath;
 
-    public TranslationTuner(ParallelCorpus tuningCorpus, LanguageModel languageModel, TranslationModel translationModel, ModelsOutputDirectory modelsOutputDirectory) {
+    public TranslationTuner(ParallelCorpus tuningCorpus, ModelsPersistence modelsPersistence) {
         this.tuningCorpus = tuningCorpus;
-        this.languageModel = languageModel;
-        this.translationModel = translationModel;
-        this.modelsOutputDirectory = modelsOutputDirectory;
+        this.modelsPersistence = modelsPersistence;
 
-        outputDirectoryPath = modelsOutputDirectory.getCanonicalPathToOutputDir() + "/tuner_output";
+        outputDirectoryPath = ModelDirectory.generateCanonicalPathToWholeModelDirectory(modelsPersistence, ModelDirectory.TUNER_MODEL);
     }
 
     public void runTuning() throws Exception {
-        modelsOutputDirectory.reloadKenLMexecutables();
+        Utilities.extractAndLoadKenLMLibrary(modelsPersistence);
 
-        File outputDirectory = new File(this.outputDirectoryPath);
-        if (outputDirectory.exists()) {
-            FileUtils.deleteDirectory(outputDirectory);
-        }
-        outputDirectory.mkdir();
+        File outputDirectory = Utilities.createDirectoryRemovingOldIfExisits(this.outputDirectoryPath);
 
         String iniFilePath = buildPhrasalIniFile();
 
-        String exampleBinwtsFilePath = this.outputDirectoryPath+"/example.binwts";
+        String exampleBinwtsFilePath = outputDirectory.getCanonicalPath()+"/example.binwts";
         File exampleBinwtsFile = new File(exampleBinwtsFilePath);
         if (exampleBinwtsFile.exists()) {
             exampleBinwtsFile.delete();
@@ -71,10 +61,11 @@ public class TranslationTuner {
 
         OnlineTuner.main(tuning_args);
 
-        tunerFinalWeightsFilePath = System.getProperty("user.dir")+"/tuning.online.final.binwts";
+        File tunerFinalWeightsFile = new File(System.getProperty("user.dir")+"/tuning.online.final.binwts");
+        modelsPersistence.registerNewDetectedModelFile(ModelFile.TUNER_WEIGHTS, tunerFinalWeightsFile.getCanonicalPath());
     }
 
-    private String buildPhrasalIniFile() throws FileNotFoundException {
+    private String buildPhrasalIniFile() throws IOException {
         Map<String, String> parameters = getParametersMap();
         String iniFilePath = outputDirectoryPath+"/phrasal.ini";
 
@@ -91,18 +82,14 @@ public class TranslationTuner {
         return iniFilePath;
     }
 
-    private Map<String, String> getParametersMap() {
+    private Map<String, String> getParametersMap() throws IOException {
         Map<String, String> parameters = new LinkedHashMap<>();
-        parameters.put("ttable-file", translationModel.getOutputFolder()+"/phrase-table.gz");
-        parameters.put("lmodel-file", "kenlm:"+languageModel.getOutputFolder()+"/"+languageModel.getModelBinaryFileName());
+        parameters.put("ttable-file", modelsPersistence.getDetectedModelFilePath(ModelFile.TRANSLATION_PHRASE_TABLE));
+        parameters.put("lmodel-file", "kenlm:"+modelsPersistence.getDetectedModelFilePath(ModelFile.LANG_MODEL_BIN));
         parameters.put("ttable-limit", "20");
         parameters.put("distortion-limit", "5");
-        parameters.put("reordering-model", "hierarchical\n"+translationModel.getOutputFolder()+"/lo-hier.msd2-bidirectional-fe.gz"+"\nmsd2-bidirectional-fe\nhierarchical\nhierarchical\nbin");
+        parameters.put("reordering-model", "hierarchical\n"+modelsPersistence.getDetectedModelFilePath(ModelFile.TRANSLATION_REORDERING_MODEL)+"\nmsd2-bidirectional-fe\nhierarchical\nhierarchical\nbin");
         parameters.put("threads", "2");
         return parameters;
-    }
-
-    public String getTunerFinalWeightsFilePath() {
-        return tunerFinalWeightsFilePath;
     }
 }

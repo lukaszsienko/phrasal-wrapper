@@ -1,56 +1,46 @@
 package pl.edu.pw.elka.phrasalwrapper;
 
-import org.apache.commons.io.FileUtils;
+import pl.edu.pw.elka.phrasalwrapper.model_persistence.ModelDirectory;
+import pl.edu.pw.elka.phrasalwrapper.model_persistence.ModelFile;
+import pl.edu.pw.elka.phrasalwrapper.model_persistence.ModelsPersistence;
 
 import java.io.File;
 
 public class LanguageModel {
 
     private String ngram;
-    private String englishCorpusFilesPaths;
-    private File kenLMextractedLibrary;
-    private String modelFileName;
+    private String pathsToFilesWithModelData;
     private String outputFolder;
+    private ModelsPersistence modelsPersistence;
 
-    public LanguageModel(int ngram, ParallelCorpus parallelCorpus, TextCorpus additionalText, ModelsOutputDirectory modelsOutputDirectory) {
-        this(ngram, parallelCorpus, modelsOutputDirectory);
-        this.englishCorpusFilesPaths = this.englishCorpusFilesPaths + " " + additionalText.getCorpusFilePath();
+    public LanguageModel(int ngram, ParallelCorpus parallelCorpus, TextCorpus additionalEnglishText, ModelsPersistence modelsPersistence) {
+        this(ngram, parallelCorpus, modelsPersistence);
+        this.pathsToFilesWithModelData = this.pathsToFilesWithModelData + " " + additionalEnglishText.getCorpusFilePath();
     }
 
-    public LanguageModel(int ngram, ParallelCorpus parallelCorpus, ModelsOutputDirectory modelsOutputDirectory) {
+    public LanguageModel(int ngram, ParallelCorpus parallelCorpus, ModelsPersistence modelsPersistence) {
         this.ngram = String.valueOf(ngram);
-        this.englishCorpusFilesPaths = parallelCorpus.getEnglishFilePath();
-        this.modelFileName = this.ngram + "gm";
-        this.outputFolder = modelsOutputDirectory.getCanonicalPathToOutputDir()+"/language_model";
-        this.kenLMextractedLibrary = modelsOutputDirectory.getKenLMextractedLibrary();
-    }
-
-    public String getModelBinaryFileName() {
-        return modelFileName + ".bin";
-    }
-
-    public String getOutputFolder() {
-        return outputFolder;
+        this.pathsToFilesWithModelData = parallelCorpus.getEnglishFilePath();
+        this.outputFolder = ModelDirectory.generateCanonicalPathToWholeModelDirectory(modelsPersistence, ModelDirectory.LANGUAGE_MODEL);
+        this.modelsPersistence = modelsPersistence;
     }
 
     public void buildLanguageModel() throws Exception {
-        File outputDirectory = new File(this.outputFolder);
-        if (outputDirectory.exists()) {
-            FileUtils.deleteDirectory(outputDirectory);
-        }
-        outputDirectory.mkdir();
+        File outputDirectory = Utilities.createDirectoryRemovingOldIfExisits(this.outputFolder);
 
-        String textModelFileName = modelFileName+".arpa";
-        String textModelPath = outputFolder+"/"+textModelFileName;
+        File kenLMextractedLibrary = Utilities.extractAndLoadKenLMLibrary(modelsPersistence);
 
-        File lmplzExecutable = new File(this.kenLMextractedLibrary.getCanonicalPath()+"/kenlm/bin/lmplz");
-        File buildBinaryExecutable = new File(this.kenLMextractedLibrary.getCanonicalPath()+"/kenlm/bin/build_binary");
+        File lmplzExecutable = new File(kenLMextractedLibrary.getCanonicalPath()+"/kenlm/bin/lmplz");
+        File buildBinaryExecutable = new File(kenLMextractedLibrary.getCanonicalPath()+"/kenlm/bin/build_binary");
 
         lmplzExecutable.setExecutable(true);
         buildBinaryExecutable.setExecutable(true);
 
-        String buildCommand = lmplzExecutable.getCanonicalPath()+" -o " + ngram + " < " + englishCorpusFilesPaths + " > "+textModelPath;
-        String transferCommand = buildBinaryExecutable.getCanonicalPath()+" trie "+outputFolder+"/"+textModelFileName+" "+outputFolder+"/"+getModelBinaryFileName();
+        String outputArpaModelPath = ModelFile.generateCanonicalPathToOneModelFile(modelsPersistence, ModelFile.LANG_MODEL_ARPA);
+        String outputBinModelPath = ModelFile.generateCanonicalPathToOneModelFile(modelsPersistence, ModelFile.LANG_MODEL_BIN);
+
+        String buildCommand = lmplzExecutable.getCanonicalPath()+" -o " + ngram + " < " + pathsToFilesWithModelData + " > "+outputArpaModelPath;
+        String transferCommand = buildBinaryExecutable.getCanonicalPath()+" trie "+outputArpaModelPath+" "+outputBinModelPath;
 
         Runtime runtime = Runtime.getRuntime();
 
@@ -68,5 +58,8 @@ public class LanguageModel {
             Utilities.printBashProcessOutput(transferToBinaryModel);
             throw new Exception("Language model building exception, transfer command did not return 0.");
         }
+
+        modelsPersistence.registerNewDetectedModelFile(ModelFile.LANG_MODEL_ARPA, outputArpaModelPath);
+        modelsPersistence.registerNewDetectedModelFile(ModelFile.LANG_MODEL_BIN, outputBinModelPath);
     }
 }

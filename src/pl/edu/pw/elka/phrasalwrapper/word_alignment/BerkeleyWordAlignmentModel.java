@@ -1,8 +1,9 @@
 package pl.edu.pw.elka.phrasalwrapper.word_alignment;
 
 import edu.berkeley.nlp.wordAlignment.Main;
-import org.apache.commons.io.FileUtils;
-import pl.edu.pw.elka.phrasalwrapper.ModelsOutputDirectory;
+import pl.edu.pw.elka.phrasalwrapper.model_persistence.ModelDirectory;
+import pl.edu.pw.elka.phrasalwrapper.model_persistence.ModelFile;
+import pl.edu.pw.elka.phrasalwrapper.model_persistence.ModelsPersistence;
 import pl.edu.pw.elka.phrasalwrapper.ParallelCorpus;
 import pl.edu.pw.elka.phrasalwrapper.Utilities;
 
@@ -15,12 +16,14 @@ public class BerkeleyWordAlignmentModel {
     private String outputFolderPath;
     private String englishFileNameSuffix;
     private String foreignFileNameSuffix;
+    private ModelsPersistence modelsPersistence;
 
-    public BerkeleyWordAlignmentModel(ParallelCorpus parallelCorpus, ModelsOutputDirectory modelsOutputDirectory) throws IOException {
+    public BerkeleyWordAlignmentModel(ParallelCorpus parallelCorpus, ModelsPersistence modelsPersistence) throws IOException {
         this.inputFolderPath = new File(parallelCorpus.getEnglishFilePath()).getParentFile().getCanonicalPath();
-        this.outputFolderPath = modelsOutputDirectory.getCanonicalPathToOutputDir()+"/berkeley_word_aligner_output";
+        this.outputFolderPath = ModelDirectory.generateCanonicalPathToWholeModelDirectory(modelsPersistence, ModelDirectory.BERKELEY_WORD_ALIGNMENT);
         this.englishFileNameSuffix = parallelCorpus.getEnglishFilenameExtension();
         this.foreignFileNameSuffix = parallelCorpus.getForeignFilenameExtension();
+        this.modelsPersistence = modelsPersistence;
     }
 
     public void runWordAlignmentProcess() throws IOException {
@@ -28,11 +31,7 @@ public class BerkeleyWordAlignmentModel {
     }
 
     public void runWordAlignmentProcess(String [] userArgs) throws IOException {
-        File outputDirectory = new File(this.outputFolderPath);
-        if (outputDirectory.exists()) {
-            FileUtils.deleteDirectory(outputDirectory);
-        }
-        outputDirectory.mkdir();
+        File outputDirectory = Utilities.createDirectoryRemovingOldIfExisits(this.outputFolderPath);
 
         String [] defaultArgs = new String[46];
         defaultArgs[0] = "-Main.forwardModels";
@@ -95,6 +94,8 @@ public class BerkeleyWordAlignmentModel {
         }
 
         Utilities.enableSystemExitCall();
+
+        modelsPersistence.registerNewDetectedModelFile(ModelFile.BERKELEY_ALIGNMENT_DIRECTORY, outputFolderPath);
     }
 
     public static void printAllOptions() {

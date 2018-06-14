@@ -5,7 +5,9 @@ import edu.stanford.nlp.mt.lm.*;
 import edu.stanford.nlp.mt.util.IOTools;
 import edu.stanford.nlp.mt.util.IString;
 import edu.stanford.nlp.util.StringUtils;
-import pl.edu.pw.elka.phrasalwrapper.translation_model.TranslationModel;
+import pl.edu.pw.elka.phrasalwrapper.model_persistence.ModelDirectory;
+import pl.edu.pw.elka.phrasalwrapper.model_persistence.ModelFile;
+import pl.edu.pw.elka.phrasalwrapper.model_persistence.ModelsPersistence;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -22,36 +24,25 @@ public class Decoder {
     private String tunerOutputFilePath;
     private String iniFilePath;
     private final PrintStream STD_OUT;
-    private ModelsOutputDirectory modelsOutputDirectory;
+    private ModelsPersistence modelsPersistence;
 
     private Phrasal loadedDecodingModel;
 
-    public Decoder(LanguageModel languageModel, TranslationModel translationModel, ModelsOutputDirectory modelsOutputDirectory, TranslationTuner tuner) throws IOException{
-        this(languageModel, translationModel, modelsOutputDirectory);
-        this.tunerOutputFilePath = tuner.getTunerFinalWeightsFilePath();
-    }
-
-    public Decoder(LanguageModel languageModel, TranslationModel translationModel, ModelsOutputDirectory modelsOutputDirectory) throws IOException {
-        File phraseTableFile = new File(translationModel.getOutputFolder() + "/phrase-table.gz");
-        if (!phraseTableFile.exists()) {
-            System.err.println("\nCheck if you've built translation model by calling TranslationModel.buildTranslationModel() method before.");
+    public Decoder(ModelsPersistence modelsPersistence) throws IOException {
+        try {
+            this.tunerOutputFilePath = modelsPersistence.getDetectedModelFilePath(ModelFile.TUNER_WEIGHTS);
+        } catch (IOException exp) {
+            System.out.println("Phrasal-wrapper warning: running decoding without loading model tuning weights file.");
         }
-        File reorderingModelFile = new File(translationModel.getOutputFolder() + "/lo-hier.msd2-bidirectional-fe.gz");
-        if (!reorderingModelFile.exists()) {
-            System.err.println("\nCheck if you've built translation model by calling TranslationModel.buildTranslationModel() method before.");
-        }
-        this.phraseTableFilePath = phraseTableFile.getCanonicalPath();
-        this.reorderingModelFilePath = reorderingModelFile.getCanonicalPath();
+        this.languageModelFilePath = modelsPersistence.getDetectedModelFilePath(ModelFile.LANG_MODEL_BIN);
+        this.phraseTableFilePath = modelsPersistence.getDetectedModelFilePath(ModelFile.TRANSLATION_PHRASE_TABLE);
+        this.reorderingModelFilePath = modelsPersistence.getDetectedModelFilePath(ModelFile.TRANSLATION_REORDERING_MODEL);
 
-        File langModelFile = new File(languageModel.getOutputFolder()+"/"+languageModel.getModelBinaryFileName());
-        if (!langModelFile.exists()) {
-            System.err.println("\nCheck if you've built language model by calling LanguageModel.buildLanguageModel() method before.");
-        }
-        this.languageModelFilePath = langModelFile.getCanonicalPath();
-
+        //TODO check if it's possible to remove this:
+        //Yes? then remove also TranslationModel.getOutputModelFolder() method
         try {
             Path iniFilePath = Utilities.getResourcePath("/phrasal.ini");
-            File dstIniFile = new File(translationModel.getOutputFolder()+"/phrasal.ini");
+            File dstIniFile = new File(ModelDirectory.generateCanonicalPathToWholeModelDirectory(modelsPersistence, ModelDirectory.TRANSLATION_MODEL)+"/phrasal.ini");
             Files.copy(iniFilePath, dstIniFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             this.iniFilePath = dstIniFile.getCanonicalPath();
         } catch (IOException exp) {
@@ -59,7 +50,7 @@ public class Decoder {
         }
 
         STD_OUT = System.out;
-        this.modelsOutputDirectory = modelsOutputDirectory;
+        this.modelsPersistence = modelsPersistence;
     }
 
     public String translateSentence(String sentenceToTranslate) {
@@ -154,7 +145,7 @@ public class Decoder {
 
         final Map<String, List<String>> configuration = getConfigurationFrom(configFile, options);
 
-        modelsOutputDirectory.reloadKenLMexecutables();
+        Utilities.extractAndLoadKenLMLibrary(modelsPersistence);
 
         edu.stanford.nlp.mt.lm.LanguageModel<IString> lm = LanguageModelFactory.load(options.getProperty("lmodel-file"));
         final Phrasal phrasal = Phrasal.loadDecoder(configuration, lm);

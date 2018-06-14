@@ -1,9 +1,13 @@
 package pl.edu.pw.elka.phrasalwrapper;
 
+import org.apache.commons.io.FileUtils;
+import pl.edu.pw.elka.phrasalwrapper.model_persistence.ModelsPersistence;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.file.*;
@@ -15,6 +19,39 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 public class Utilities {
+
+    public static File createDirectoryRemovingOldIfExisits(String pathToDirectory) throws IOException {
+        File dir = new File(pathToDirectory);
+        if (dir.exists()) {
+            FileUtils.deleteDirectory(dir);
+        }
+        boolean dirCreated = dir.mkdir();
+        if (!dirCreated) {
+            throw new IOException("Utilities.createDirectoryRemovingOldIfExisits: Cannot create output directory.");
+        }
+        return dir;
+    }
+
+    public static File extractAndLoadKenLMLibrary(ModelsPersistence modelsPersistence) throws Exception {
+        File dest = new File(modelsPersistence.getCanonicalPathToModelsDir() +"/kenLanguageModel");
+        if (dest.exists()) {
+            FileUtils.deleteDirectory(dest);
+        }
+        Utilities.extractDirectory("/kenLanguageModel", dest.getParentFile().getCanonicalPath());
+
+        loadLibrary(dest.getCanonicalPath());
+        return dest;
+    }
+
+    @Deprecated
+    private static void loadLibrary(String libraryCanonicalPath) throws Exception {
+        if (!System.getProperty("java.library.path").contains(libraryCanonicalPath)) {
+            System.setProperty("java.library.path", System.getProperty("java.library.path")+":"+libraryCanonicalPath);
+            Field fieldSysPath = ClassLoader.class.getDeclaredField( "sys_paths" );
+            fieldSysPath.setAccessible( true );
+            fieldSysPath.set( null, null );
+        }
+    }
 
     public static String[] concatenateTables(String[] tab_1, String[] tab_2) {
         String[] result = new String[tab_2.length + tab_1.length];

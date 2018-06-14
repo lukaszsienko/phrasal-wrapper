@@ -1,7 +1,9 @@
 package pl.edu.pw.elka.phrasalwrapper.word_alignment;
 
 import org.apache.commons.io.FileUtils;
-import pl.edu.pw.elka.phrasalwrapper.ModelsOutputDirectory;
+import pl.edu.pw.elka.phrasalwrapper.model_persistence.ModelDirectory;
+import pl.edu.pw.elka.phrasalwrapper.model_persistence.ModelFile;
+import pl.edu.pw.elka.phrasalwrapper.model_persistence.ModelsPersistence;
 import pl.edu.pw.elka.phrasalwrapper.ParallelCorpus;
 import pl.edu.pw.elka.phrasalwrapper.Utilities;
 
@@ -14,21 +16,15 @@ public class GizaWordAlignmentModel {
     private String outputFolder;
     private String forToEngAlignmentFilePath;
     private String engToForAlignmentFilePath;
+    private ModelsPersistence modelsPersistence;
 
-    public GizaWordAlignmentModel(ParallelCorpus parallelCorpus, ModelsOutputDirectory modelsOutputDirectory) {
+    public GizaWordAlignmentModel(ParallelCorpus parallelCorpus, ModelsPersistence modelsPersistence) {
         this.parallelCorpus = parallelCorpus;
-        this.outputFolder = modelsOutputDirectory.getCanonicalPathToOutputDir()+"/giza_word_aligner_output";
+        this.outputFolder = ModelDirectory.generateCanonicalPathToWholeModelDirectory(modelsPersistence, ModelDirectory.GIZA_WORD_ALIGNMENT);
     }
 
     public void runWordAlignmentProcess() throws Exception {
-        File outputDirectory = new File(this.outputFolder);
-        if (outputDirectory.exists()) {
-            FileUtils.deleteDirectory(outputDirectory);
-        }
-        boolean dirCreated = outputDirectory.mkdir();
-        if (!dirCreated) {
-            throw new Exception("Cannot create output directory for giza alignment processing");
-        }
+        File outputDirectory = Utilities.createDirectoryRemovingOldIfExisits(this.outputFolder);
 
         File gizaSoftDir = extractGizaSoftware(outputDirectory.getCanonicalPath());
         File forToEngAlignmentDir = new File(outputDirectory, "align_for_eng");
@@ -56,6 +52,8 @@ public class GizaWordAlignmentModel {
         } else {
             forToEngAlignmentFilePath = forToEngAlignmentDir.getCanonicalPath()+"/alignment.A3.final";
             engToForAlignmentFilePath = engToForAlignmentDir.getCanonicalPath()+"/alignment.A3.final";
+            modelsPersistence.registerNewDetectedModelFile(ModelFile.GIZA_FOR_TO_ENG_ALIGNMENT, forToEngAlignmentFilePath);
+            modelsPersistence.registerNewDetectedModelFile(ModelFile.GIZA_ENG_TO_FOR_ALIGNMENT, engToForAlignmentFilePath);
         }
     }
 
