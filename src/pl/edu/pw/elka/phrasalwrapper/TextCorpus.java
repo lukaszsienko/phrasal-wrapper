@@ -14,14 +14,14 @@ public class TextCorpus {
     private String filenameExtension;
 
     public TextCorpus(String filePath) throws IOException {
-        file = new File(filePath.trim());
+        this.file = new File(filePath.trim());
         if (!file.exists()) {
             System.out.println("TextCorpus: Cannot find a file at specified path: "+filePath.trim());
             throw new FileNotFoundException("TextCorpus: Cannot find a file at specified path: "+filePath.trim());
         }
 
-        filePath = file.getCanonicalPath();
-        filenameExtension = FilenameUtils.getExtension(filePath);
+        this.filePath = file.getCanonicalPath();
+        this.filenameExtension = FilenameUtils.getExtension(filePath);
     }
 
     public TextCorpus(String filePath, String newFilenameToBeSet) throws IOException {
@@ -30,7 +30,7 @@ public class TextCorpus {
             Path pathToNewCorpusFile = Utilities.renameFile(this.filePath, newFilenameToBeSet);
             this.file = pathToNewCorpusFile.toFile();
             this.filePath = this.file.getCanonicalPath();
-            filenameExtension = FilenameUtils.getExtension(this.filePath);
+            this.filenameExtension = FilenameUtils.getExtension(this.filePath);
         }
     }
 
