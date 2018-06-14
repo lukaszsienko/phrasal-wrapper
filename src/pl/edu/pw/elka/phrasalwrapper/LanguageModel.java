@@ -26,7 +26,8 @@ public class LanguageModel {
     }
 
     public void buildLanguageModel() throws Exception {
-        File outputDirectory = Utilities.createDirectoryRemovingOldIfExisits(this.outputFolder);
+        Utilities.printMessage("Started building language model...");
+        Utilities.createDirectoryRemovingOldIfExisits(this.outputFolder);
 
         File kenLMextractedLibrary = Utilities.extractAndLoadKenLMLibrary(modelsPersistence);
 
@@ -61,5 +62,6 @@ public class LanguageModel {
 
         modelsPersistence.registerNewDetectedModelFile(ModelFile.LANG_MODEL_ARPA, outputArpaModelPath);
         modelsPersistence.registerNewDetectedModelFile(ModelFile.LANG_MODEL_BIN, outputBinModelPath);
+        Utilities.printMessage("Finished building language model.");
     }
 }

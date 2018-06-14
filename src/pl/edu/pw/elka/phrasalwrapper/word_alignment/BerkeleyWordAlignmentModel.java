@@ -31,6 +31,7 @@ public class BerkeleyWordAlignmentModel {
     }
 
     public void runWordAlignmentProcess(String [] userArgs) throws IOException {
+        Utilities.printMessage("Started word alignment using Berkeley Aligner...");
         File outputDirectory = Utilities.createDirectoryRemovingOldIfExisits(this.outputFolderPath);
 
         String [] defaultArgs = new String[46];
@@ -53,7 +54,7 @@ public class BerkeleyWordAlignmentModel {
         defaultArgs[16] = "-Main.saveParams";
         defaultArgs[17] = "true";
         defaultArgs[18] = "-EMWordAligner.numThreads";
-        defaultArgs[19] = "5";
+        defaultArgs[19] = "1";
         defaultArgs[20] = "-log.msPerLine";
         defaultArgs[21] = "10000";
         defaultArgs[22] = "-Main.alignTraining";
@@ -96,6 +97,7 @@ public class BerkeleyWordAlignmentModel {
         Utilities.enableSystemExitCall();
 
         modelsPersistence.registerNewDetectedModelFile(ModelFile.BERKELEY_ALIGNMENT_DIRECTORY, outputFolderPath);
+        Utilities.printMessage("Finished word alignment using Berkeley Aligner.");
     }
 
     public static void printAllOptions() {

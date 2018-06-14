@@ -24,6 +24,7 @@ public class GizaWordAlignmentModel {
     }
 
     public void runWordAlignmentProcess() throws Exception {
+        Utilities.printMessage("Started word alignment using GIZA++ aligner...");
         File outputDirectory = Utilities.createDirectoryRemovingOldIfExisits(this.outputFolder);
 
         File gizaSoftDir = extractGizaSoftware(outputDirectory.getCanonicalPath());
@@ -54,6 +55,7 @@ public class GizaWordAlignmentModel {
             engToForAlignmentFilePath = engToForAlignmentDir.getCanonicalPath()+"/alignment.A3.final";
             modelsPersistence.registerNewDetectedModelFile(ModelFile.GIZA_FOR_TO_ENG_ALIGNMENT, forToEngAlignmentFilePath);
             modelsPersistence.registerNewDetectedModelFile(ModelFile.GIZA_ENG_TO_FOR_ALIGNMENT, engToForAlignmentFilePath);
+            Utilities.printMessage("Finished word alignment using GIZA++ aligner.");
         }
     }
 

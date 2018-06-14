@@ -21,6 +21,7 @@ public abstract class TranslationModel {
     }
 
     public void buildTranslationModel() throws IOException {
+        Utilities.printMessage("Started building translation model (phrase table and reordering model)...");
         File outputDirectory = Utilities.createDirectoryRemovingOldIfExisits(this.outputModelFolder);
 
         String[] phrase_extract_args = getPhraseExtractParameters(outputDirectory.getCanonicalPath());
@@ -37,6 +38,7 @@ public abstract class TranslationModel {
         String reorderingModelFilePath = ModelFile.generateCanonicalPathToOneModelFile(modelsPersistence, ModelFile.TRANSLATION_REORDERING_MODEL);
         modelsPersistence.registerNewDetectedModelFile(ModelFile.TRANSLATION_PHRASE_TABLE, phraseTableFilePath);
         modelsPersistence.registerNewDetectedModelFile(ModelFile.TRANSLATION_REORDERING_MODEL, reorderingModelFilePath);
+        Utilities.printMessage("Finished building translation model.");
     }
 
     protected String[] getPhraseExtractParameters(String outputPath) {
@@ -70,9 +72,4 @@ public abstract class TranslationModel {
 
         return phrase_extract_args;
     }
-
-    public String getOutputModelFolder() {
-        return outputModelFolder;
-    }
-
 }

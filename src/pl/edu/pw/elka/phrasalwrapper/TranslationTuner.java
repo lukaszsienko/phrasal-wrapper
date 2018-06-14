@@ -8,8 +8,15 @@ import pl.edu.pw.elka.phrasalwrapper.model_persistence.ModelsPersistence;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+
+import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 public class TranslationTuner {
 
@@ -25,6 +32,7 @@ public class TranslationTuner {
     }
 
     public void runTuning() throws Exception {
+        Utilities.printMessage("Started tuning process...");
         Utilities.extractAndLoadKenLMLibrary(modelsPersistence);
 
         File outputDirectory = Utilities.createDirectoryRemovingOldIfExisits(this.outputDirectoryPath);
@@ -61,8 +69,11 @@ public class TranslationTuner {
 
         OnlineTuner.main(tuning_args);
 
-        File tunerFinalWeightsFile = new File(System.getProperty("user.dir")+"/tuning.online.final.binwts");
-        modelsPersistence.registerNewDetectedModelFile(ModelFile.TUNER_WEIGHTS, tunerFinalWeightsFile.getCanonicalPath());
+        moveResultFilesToModelFolder();
+
+        String tunerFinalWeightsFilePath = ModelFile.generateCanonicalPathToOneModelFile(modelsPersistence, ModelFile.TUNER_WEIGHTS);
+        modelsPersistence.registerNewDetectedModelFile(ModelFile.TUNER_WEIGHTS, tunerFinalWeightsFilePath);
+        Utilities.printMessage("Finished tuning process...");
     }
 
     private String buildPhrasalIniFile() throws IOException {
@@ -91,5 +102,21 @@ public class TranslationTuner {
         parameters.put("reordering-model", "hierarchical\n"+modelsPersistence.getDetectedModelFilePath(ModelFile.TRANSLATION_REORDERING_MODEL)+"\nmsd2-bidirectional-fe\nhierarchical\nhierarchical\nbin");
         parameters.put("threads", "2");
         return parameters;
+    }
+
+    private void moveResultFilesToModelFolder() throws IOException {
+        File defaultOutputDirectory = new File(System.getProperty("user.dir"));
+        File[] filesTable = defaultOutputDirectory.listFiles();
+        if (filesTable == null) {
+            throw new IOException("Cannot copy tuning results file from System.getProperty(\"user.dir\") folder to models/tuner_output folder.");
+        }
+        List<File> files = Arrays.asList(filesTable);
+        for (File f: files) {
+            if (!f.isDirectory() && f.getName().startsWith("tuning.online.")) {
+                Path source = f.toPath();
+                Path targetDirectory = Paths.get(ModelDirectory.generateCanonicalPathToWholeModelDirectory(modelsPersistence, ModelDirectory.TUNER_MODEL));
+                Files.move(source, targetDirectory.resolve(source.getFileName()), REPLACE_EXISTING);
+            }
+        }
     }
 }

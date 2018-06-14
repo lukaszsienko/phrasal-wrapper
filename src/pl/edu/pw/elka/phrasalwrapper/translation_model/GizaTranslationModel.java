@@ -5,8 +5,6 @@ import pl.edu.pw.elka.phrasalwrapper.ParallelCorpus;
 import pl.edu.pw.elka.phrasalwrapper.Utilities;
 import pl.edu.pw.elka.phrasalwrapper.word_alignment.GizaWordAlignmentModel;
 
-import java.io.IOException;
-
 public class GizaTranslationModel extends TranslationModel {
 
     private GizaWordAlignmentModel alignmentModel;

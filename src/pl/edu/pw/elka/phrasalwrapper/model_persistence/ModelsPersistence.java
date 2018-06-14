@@ -1,5 +1,7 @@
 package pl.edu.pw.elka.phrasalwrapper.model_persistence;
 
+import pl.edu.pw.elka.phrasalwrapper.Utilities;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -22,6 +24,8 @@ public class ModelsPersistence {
         }
 
         ModelsPersistence modelsPersistence = new ModelsPersistence(modelsDirectory.getCanonicalPath());
+
+        Utilities.printMessage("Created new empty model directory.");
         return modelsPersistence;
     }
 
@@ -37,6 +41,7 @@ public class ModelsPersistence {
             throw new IOException("Cannot detect any model in specified model directory.");
         }
 
+        Utilities.printMessage("Model loaded from: "+pathToPersistedModelsDirectory);
         return modelsPersistence;
     }
 
@@ -69,7 +74,7 @@ public class ModelsPersistence {
         for (ModelFile modelFile: allModelFiles) {
             String pathToFile = ModelFile.generateCanonicalPathToOneModelFile(this, modelFile);
             File file = new File(pathToFile);
-            if (file.exists() && !file.isDirectory()) {
+            if (file.exists() && modelFile.isResourceDirectory().equals(file.isDirectory())) {
                 registerNewDetectedModelFile(modelFile, pathToFile);
             }
         }

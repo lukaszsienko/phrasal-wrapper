@@ -12,6 +12,8 @@ import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.file.*;
 import java.security.Permission;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +21,13 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 public class Utilities {
+
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+
+    public static void printMessage(String messageContent) {
+        String date = dateFormat.format(new Date());
+        System.out.println("\n["+date+"] "+messageContent);
+    }
 
     public static File createDirectoryRemovingOldIfExisits(String pathToDirectory) throws IOException {
         File dir = new File(pathToDirectory);

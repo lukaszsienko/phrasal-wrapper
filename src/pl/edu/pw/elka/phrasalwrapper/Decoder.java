@@ -5,15 +5,11 @@ import edu.stanford.nlp.mt.lm.*;
 import edu.stanford.nlp.mt.util.IOTools;
 import edu.stanford.nlp.mt.util.IString;
 import edu.stanford.nlp.util.StringUtils;
-import pl.edu.pw.elka.phrasalwrapper.model_persistence.ModelDirectory;
 import pl.edu.pw.elka.phrasalwrapper.model_persistence.ModelFile;
 import pl.edu.pw.elka.phrasalwrapper.model_persistence.ModelsPersistence;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.*;
 
 public class Decoder {
@@ -22,7 +18,6 @@ public class Decoder {
     private String reorderingModelFilePath;
     private String languageModelFilePath;
     private String tunerOutputFilePath;
-    private String iniFilePath;
     private final PrintStream STD_OUT;
     private ModelsPersistence modelsPersistence;
 
@@ -37,17 +32,6 @@ public class Decoder {
         this.languageModelFilePath = modelsPersistence.getDetectedModelFilePath(ModelFile.LANG_MODEL_BIN);
         this.phraseTableFilePath = modelsPersistence.getDetectedModelFilePath(ModelFile.TRANSLATION_PHRASE_TABLE);
         this.reorderingModelFilePath = modelsPersistence.getDetectedModelFilePath(ModelFile.TRANSLATION_REORDERING_MODEL);
-
-        //TODO check if it's possible to remove this:
-        //Yes? then remove also TranslationModel.getOutputModelFolder() method
-        try {
-            Path iniFilePath = Utilities.getResourcePath("/phrasal.ini");
-            File dstIniFile = new File(ModelDirectory.generateCanonicalPathToWholeModelDirectory(modelsPersistence, ModelDirectory.TRANSLATION_MODEL)+"/phrasal.ini");
-            Files.copy(iniFilePath, dstIniFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            this.iniFilePath = dstIniFile.getCanonicalPath();
-        } catch (IOException exp) {
-            exp.printStackTrace();
-        }
 
         STD_OUT = System.out;
         this.modelsPersistence = modelsPersistence;
@@ -93,21 +77,23 @@ public class Decoder {
     }
 
     public void loadDecodingModel() {
+        Utilities.printMessage("Started loading decode model...");
         String[] decode_args = getDecodingParameters();
         try {
             loadedDecodingModel = loadDecoding(decode_args);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        Utilities.printMessage("Finished loading decode model.");
     }
 
     private String[] getDecodingParameters() {
         String[] decode_args;
         boolean withTuning = this.tunerOutputFilePath != null && !this.tunerOutputFilePath.isEmpty();
         if (withTuning) {
-            decode_args = new String[15];
+            decode_args = new String[14];
         } else {
-            decode_args = new String[13];
+            decode_args = new String[12];
         }
         decode_args[0] = "-ttable-file";
         decode_args[1] = phraseTableFilePath;
@@ -124,9 +110,6 @@ public class Decoder {
         if (withTuning) {
             decode_args[12] = "-weights-file";
             decode_args[13] = tunerOutputFilePath;
-            decode_args[14] = iniFilePath;
-        } else {
-            decode_args[12] = iniFilePath;
         }
         return decode_args;
     }

@@ -21,6 +21,7 @@ public class CorpusPreparer {
     }
 
     public void splitCorpusIntoTrainAndTuneParts(final int EVERY_N_TH_GOES_TO_TUNING_SET) throws IOException {
+        Utilities.printMessage("Preparing train and tune corpuses...");
         File outputFilesDirectory = forSideOfParallelCorpus.getParentFile();
 
         File trainDir = makeNewDirectory(outputFilesDirectory, "train_corpus");
@@ -76,11 +77,12 @@ public class CorpusPreparer {
                 lineCounter = (lineCounter + 1) % EVERY_N_TH_GOES_TO_TUNING_SET;
             }
 
-            System.out.println("All lines: "+linenr);
-            System.out.println("Rejected: "+rejected);
-            System.out.println("Added to train: "+addedTrain);
-            System.out.println("Added to tune: "+addedTune);
-            System.out.println("All added: "+(addedTrain+addedTune));
+            Utilities.printMessage("Finished. Statistics info: ");
+            System.out.println("Number of all pairs of lines: "+linenr);
+            System.out.println("Accepted pairs of line: "+(addedTrain+addedTune));
+            System.out.println("- added to train: "+addedTrain);
+            System.out.println("- added to tune: "+addedTune);
+            System.out.println("Rejected line pairs: "+rejected+" which is approx. "+Math.round(100*(rejected/linenr))+"% of entire corpus.");
         } catch (IOException e) {
             e.printStackTrace();
         }
