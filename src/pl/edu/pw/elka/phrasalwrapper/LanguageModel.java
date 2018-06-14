@@ -30,8 +30,8 @@ public class LanguageModel {
 
         File kenLMextractedLibrary = Utilities.extractAndLoadKenLMLibrary(modelsPersistence);
 
-        File lmplzExecutable = new File(kenLMextractedLibrary.getCanonicalPath()+"/kenlm/bin/lmplz");
-        File buildBinaryExecutable = new File(kenLMextractedLibrary.getCanonicalPath()+"/kenlm/bin/build_binary");
+        File lmplzExecutable = new File(kenLMextractedLibrary.getCanonicalPath()+"/lmplz");
+        File buildBinaryExecutable = new File(kenLMextractedLibrary.getCanonicalPath()+"/build_binary");
 
         lmplzExecutable.setExecutable(true);
         buildBinaryExecutable.setExecutable(true);
