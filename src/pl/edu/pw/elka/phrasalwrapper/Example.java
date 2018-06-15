@@ -7,8 +7,8 @@ import pl.edu.pw.elka.phrasalwrapper.word_alignment.BerkeleyWordAlignmentModel;
 
 public class Example {
 
-    public static void exampleUseCase(String foreignFilePath, String englishFilePath, String englishOnlyCorpusFilePath, String modelOutputDirPath) throws Exception {
-        ModelsPersistence modelsPersistence =  ModelsPersistence.createEmptyModelsDirectory(modelOutputDirPath, "models");
+    public static void exampleUseCase(String foreignFilePath, String englishFilePath, String englishOnlyCorpusFilePath, String modelOutputDirPath, String modelName) throws Exception {
+        ModelsPersistence modelsPersistence =  ModelsPersistence.createEmptyModelsDirectory(modelOutputDirPath, modelName);
 
         final int EVERY_N_TH_GOES_TO_TUNING_SET = 14;
         CorpusPreparer corpusPreparer = new CorpusPreparer(foreignFilePath, englishFilePath);
@@ -40,6 +40,7 @@ public class Example {
         String englishFilePath = args[1];
         String englishOnlyCorpusFilePath = args[2];
         String modelOutputDirPath = args[3];
-        exampleUseCase(foreignFilePath, englishFilePath, englishOnlyCorpusFilePath, modelOutputDirPath);
+        String modelName = args[4];
+        exampleUseCase(foreignFilePath, englishFilePath, englishOnlyCorpusFilePath, modelOutputDirPath, modelName);
     }
 }
