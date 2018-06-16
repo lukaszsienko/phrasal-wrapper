@@ -2,8 +2,10 @@ package pl.edu.pw.elka.phrasalwrapper;
 
 import pl.edu.pw.elka.phrasalwrapper.model_persistence.ModelsPersistence;
 import pl.edu.pw.elka.phrasalwrapper.translation_model.BerkeleyTranslationModel;
+import pl.edu.pw.elka.phrasalwrapper.translation_model.GizaTranslationModel;
 import pl.edu.pw.elka.phrasalwrapper.translation_model.TranslationModel;
 import pl.edu.pw.elka.phrasalwrapper.word_alignment.BerkeleyWordAlignmentModel;
+import pl.edu.pw.elka.phrasalwrapper.word_alignment.GizaWordAlignmentModel;
 
 public class Example {
 
@@ -22,11 +24,20 @@ public class Example {
         LanguageModel languageModel = new LanguageModel(5, trainingCorpus, englishMonolingualCorpus, modelsPersistence);
         languageModel.buildLanguageModel();
 
+        //Berkeley word alignment model
         BerkeleyWordAlignmentModel alignmentModel = new BerkeleyWordAlignmentModel(trainingCorpus, modelsPersistence);
         alignmentModel.runWordAlignmentProcess();
+        //Building translation model using Berkeley
+        TranslationModel translationModelBerkeley = new BerkeleyTranslationModel(alignmentModel, modelsPersistence);
+        translationModelBerkeley.buildTranslationModel();
 
-        TranslationModel translationModel = new BerkeleyTranslationModel(alignmentModel, modelsPersistence);
-        translationModel.buildTranslationModel();
+        //GIZA++ word alignment model
+        GizaWordAlignmentModel gizaAlignmentModel = new GizaWordAlignmentModel(trainingCorpus, modelsPersistence);
+        alignmentModel.runWordAlignmentProcess();
+        //Building translation model using GIZA++
+        TranslationModel translationModelGiza = new GizaTranslationModel(gizaAlignmentModel, trainingCorpus, modelsPersistence);
+        translationModelGiza.buildTranslationModel();
+        //Last built translation model is registered in model persistence and will be used for decoding
 
         TranslationTuner tuner = new TranslationTuner(tuningCorpus, modelsPersistence);
         tuner.runTuning();

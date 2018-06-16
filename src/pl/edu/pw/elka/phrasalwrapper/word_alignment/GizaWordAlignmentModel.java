@@ -9,6 +9,7 @@ import pl.edu.pw.elka.phrasalwrapper.Utilities;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class GizaWordAlignmentModel {
 
@@ -21,6 +22,7 @@ public class GizaWordAlignmentModel {
     public GizaWordAlignmentModel(ParallelCorpus parallelCorpus, ModelsPersistence modelsPersistence) {
         this.parallelCorpus = parallelCorpus;
         this.outputFolder = ModelDirectory.generateCanonicalPathToWholeModelDirectory(modelsPersistence, ModelDirectory.GIZA_WORD_ALIGNMENT);
+        this.modelsPersistence = modelsPersistence;
     }
 
     public void runWordAlignmentProcess() throws Exception {
@@ -30,6 +32,11 @@ public class GizaWordAlignmentModel {
         File gizaSoftDir = extractGizaSoftware(outputDirectory.getCanonicalPath());
         File forToEngAlignmentDir = new File(outputDirectory, "align_for_eng");
         File engToForAlignmentDir = new File(outputDirectory, "align_eng_for");
+        boolean succForEng = forToEngAlignmentDir.mkdir();
+        boolean succEngFor = engToForAlignmentDir.mkdir();
+        if (!succForEng || !succEngFor) {
+            throw new Exception("Cannot create output folders for giza alignment process.");
+        }
 
         File script = new File(gizaSoftDir.getCanonicalPath()+"/run_align");
         boolean fileIsExecutable = script.setExecutable(true);
@@ -37,18 +44,21 @@ public class GizaWordAlignmentModel {
             throw new Exception("Giza alignment script file cannot be made executable");
         }
 
-        String[] run_script_cmd = {"/bin/sh","-c",
+        String[] run_script_cmd = {"/bin/sh",
                 script.getAbsolutePath(),
                 parallelCorpus.getForeignFilePath(),
                 parallelCorpus.getEnglishFilePath(),
                 forToEngAlignmentDir.getCanonicalPath(),
                 engToForAlignmentDir.getCanonicalPath()};
-        Runtime runtime = Runtime.getRuntime();
-        Process gizaAlignProcess = runtime.exec(run_script_cmd, null, gizaSoftDir);
+
+        ProcessBuilder pb = new ProcessBuilder(Arrays.asList(run_script_cmd));
+        pb.directory(gizaSoftDir);
+        pb.inheritIO();
+
+        Process gizaAlignProcess = pb.start();
         gizaAlignProcess.waitFor();
 
         if (gizaAlignProcess.exitValue() != 0) {
-            Utilities.printBashProcessOutput(gizaAlignProcess);
             throw new Exception("Giza word alignment exception, run align script command did not return 0.");
         } else {
             forToEngAlignmentFilePath = forToEngAlignmentDir.getCanonicalPath()+"/alignment.A3.final";

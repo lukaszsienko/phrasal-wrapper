@@ -5,6 +5,7 @@ import pl.edu.pw.elka.phrasalwrapper.model_persistence.ModelFile;
 import pl.edu.pw.elka.phrasalwrapper.model_persistence.ModelsPersistence;
 
 import java.io.File;
+import java.util.Arrays;
 
 public class LanguageModel {
 
@@ -40,23 +41,24 @@ public class LanguageModel {
         String outputArpaModelPath = ModelFile.generateCanonicalPathToOneModelFile(modelsPersistence, ModelFile.LANG_MODEL_ARPA);
         String outputBinModelPath = ModelFile.generateCanonicalPathToOneModelFile(modelsPersistence, ModelFile.LANG_MODEL_BIN);
 
-        String buildCommand = lmplzExecutable.getCanonicalPath()+" -o " + ngram + " < " + pathsToFilesWithModelData + " > "+outputArpaModelPath;
-        String transferCommand = buildBinaryExecutable.getCanonicalPath()+" trie "+outputArpaModelPath+" "+outputBinModelPath;
+        String buildArpaModelCommand = lmplzExecutable.getCanonicalPath()+" -o " + ngram + " < " + pathsToFilesWithModelData + " > "+outputArpaModelPath;
+        String buildBinModelCommand = buildBinaryExecutable.getCanonicalPath()+" trie "+outputArpaModelPath+" "+outputBinModelPath;
 
-        Runtime runtime = Runtime.getRuntime();
-
-        String[] build_cmd = {"/bin/sh","-c", buildCommand};
-        Process buildTextModel = runtime.exec(build_cmd);
+        String[] build_arpa_model_cmd = {"/bin/sh","-c", buildArpaModelCommand};
+        ProcessBuilder pbArpaModel = new ProcessBuilder(Arrays.asList(build_arpa_model_cmd));
+        pbArpaModel.inheritIO();
+        Process buildTextModel = pbArpaModel.start();
         buildTextModel.waitFor();
         if (buildTextModel.exitValue() != 0) {
-            Utilities.printBashProcessOutput(buildTextModel);
             throw new Exception("Language model building exception, build command did not return 0.");
         }
 
-        Process transferToBinaryModel = runtime.exec(transferCommand);
-        transferToBinaryModel.waitFor();
-        if (transferToBinaryModel.exitValue() != 0) {
-            Utilities.printBashProcessOutput(transferToBinaryModel);
+        String[] build_bin_model_cmd = {"/bin/sh","-c", buildBinModelCommand};
+        ProcessBuilder pbBinModel = new ProcessBuilder(Arrays.asList(build_bin_model_cmd));
+        pbBinModel.inheritIO();
+        Process buildBinaryModel = pbBinModel.start();
+        buildBinaryModel.waitFor();
+        if (buildBinaryModel.exitValue() != 0) {
             throw new Exception("Language model building exception, transfer command did not return 0.");
         }
 

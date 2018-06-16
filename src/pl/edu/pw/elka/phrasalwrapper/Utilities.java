@@ -100,7 +100,15 @@ public class Utilities {
 
         String pathToJar = Utilities.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         String decodedPathToJar = URLDecoder.decode(pathToJar, "UTF-8");
-        JarFile jarFile = new JarFile(decodedPathToJar);
+        JarFile jarFile = null;
+        try {
+            jarFile = new JarFile(decodedPathToJar);
+        } catch (IOException e) {
+            //case only for developing wrapper in IDE, works for Intellij IDEA
+            String src = System.getProperty("user.dir")+folderPath;
+            FileUtils.copyDirectoryToDirectory(Paths.get(src).toFile(), Paths.get(outputPath).toFile());
+            return;
+        }
 
         URI uriToJar = URI.create("jar:file:"+decodedPathToJar);
         Map<String, String> env = new HashMap<>();
