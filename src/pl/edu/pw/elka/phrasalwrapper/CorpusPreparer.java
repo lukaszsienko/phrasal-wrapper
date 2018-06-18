@@ -24,11 +24,11 @@ public class CorpusPreparer {
         Utilities.printMessage("Preparing train and tune corpuses...");
         File outputFilesDirectory = forSideOfParallelCorpus.getParentFile();
 
-        File trainDir = makeNewDirectory(outputFilesDirectory, "train_corpus");
+        File trainDir = Utilities.createDirectoryRemovingOldIfExisits(outputFilesDirectory.getCanonicalPath()+"/train_corpus");
         File forTrainFile = new File(trainDir, "training.for");
         File engTrainFile = new File(trainDir, "training.eng");
 
-        File tuneDir = makeNewDirectory(outputFilesDirectory, "tune_corpus");
+        File tuneDir = Utilities.createDirectoryRemovingOldIfExisits(outputFilesDirectory.getCanonicalPath()+"/tune_corpus");
         File forTuneFile = new File(tuneDir, "tuning.for");
         File engTuneFile = new File(tuneDir, "tuning.eng");
 
