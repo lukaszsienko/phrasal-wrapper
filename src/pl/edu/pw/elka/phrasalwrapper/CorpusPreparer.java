@@ -74,7 +74,9 @@ public class CorpusPreparer {
                     addedTrain++;
                 }
 
-                lineCounter = (lineCounter + 1) % EVERY_N_TH_GOES_TO_TUNING_SET;
+                if (EVERY_N_TH_GOES_TO_TUNING_SET > 0) {
+                    lineCounter = (lineCounter + 1) % EVERY_N_TH_GOES_TO_TUNING_SET;
+                }
             }
 
             Utilities.printMessage("Finished. Statistics info: ");
