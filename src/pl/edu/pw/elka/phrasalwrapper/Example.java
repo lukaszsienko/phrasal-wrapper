@@ -25,15 +25,15 @@ public class Example {
         languageModel.buildLanguageModel();
 
         //Berkeley word alignment model
-        BerkeleyWordAlignmentModel alignmentModel = new BerkeleyWordAlignmentModel(trainingCorpus, modelsPersistence);
-        alignmentModel.runWordAlignmentProcess();
+        BerkeleyWordAlignmentModel berkeleyAlignmentModel = new BerkeleyWordAlignmentModel(trainingCorpus, modelsPersistence);
+        berkeleyAlignmentModel.runWordAlignmentProcess();
         //Building translation model using Berkeley
-        TranslationModel translationModelBerkeley = new BerkeleyTranslationModel(alignmentModel, modelsPersistence);
+        TranslationModel translationModelBerkeley = new BerkeleyTranslationModel(berkeleyAlignmentModel, modelsPersistence);
         translationModelBerkeley.buildTranslationModel();
 
         //GIZA++ word alignment model
         GizaWordAlignmentModel gizaAlignmentModel = new GizaWordAlignmentModel(trainingCorpus, modelsPersistence);
-        alignmentModel.runWordAlignmentProcess();
+        gizaAlignmentModel.runWordAlignmentProcess();
         //Building translation model using GIZA++
         TranslationModel translationModelGiza = new GizaTranslationModel(gizaAlignmentModel, trainingCorpus, modelsPersistence);
         translationModelGiza.buildTranslationModel();

@@ -34,7 +34,7 @@ public class BerkeleyWordAlignmentModel {
         Utilities.printMessage("Started word alignment using Berkeley Aligner...");
         File outputDirectory = Utilities.createDirectoryRemovingOldIfExisits(this.outputFolderPath);
 
-        String [] defaultArgs = new String[46];
+        String [] defaultArgs = new String[48];
         defaultArgs[0] = "-Main.forwardModels";
         defaultArgs[1] = "MODEL1";
         defaultArgs[2] = "HMM";
@@ -81,6 +81,8 @@ public class BerkeleyWordAlignmentModel {
         defaultArgs[43] = "true";
         defaultArgs[44] = "-Evaluator.writeGIZA";
         defaultArgs[45] = "true";
+        defaultArgs[46] = "-Data.maxTrainingLength";
+        defaultArgs[47] = String.valueOf(255+1);//Max nr of words is 255 (CorpusPreparer); added +1 just in case
 
         Utilities.forbidSystemExitCall();
 
