@@ -1,5 +1,7 @@
 package pl.edu.pw.elka.phrasalwrapper;
 
+import pl.edu.pw.elka.phrasalwrapper.model_persistence.ModelsPersistence;
+
 import java.io.*;
 
 public class CorpusPreparer {
@@ -20,15 +22,15 @@ public class CorpusPreparer {
         }
     }
 
-    public void splitCorpusIntoTrainAndTuneParts(final int EVERY_N_TH_GOES_TO_TUNING_SET) throws IOException {
+    public void splitCorpusIntoTrainAndTuneParts(final int EVERY_N_TH_GOES_TO_TUNING_SET, ModelsPersistence modelsPersistence) throws IOException {
         Utilities.printMessage("Preparing train and tune corpuses...");
-        File outputFilesDirectory = forSideOfParallelCorpus.getParentFile();
+        File outputFilesDirectory = new File(modelsPersistence.getCanonicalPathToModelsDir());
 
-        File trainDir = Utilities.createDirectoryRemovingOldIfExisits(outputFilesDirectory.getCanonicalPath()+"/train_corpus");
+        File trainDir = Utilities.createDirectoryRemovingOldIfExists(outputFilesDirectory.getCanonicalPath()+"/train_corpus");
         File forTrainFile = new File(trainDir, "training.for");
         File engTrainFile = new File(trainDir, "training.eng");
 
-        File tuneDir = Utilities.createDirectoryRemovingOldIfExisits(outputFilesDirectory.getCanonicalPath()+"/tune_corpus");
+        File tuneDir = Utilities.createDirectoryRemovingOldIfExists(outputFilesDirectory.getCanonicalPath()+"/tune_corpus");
         File forTuneFile = new File(tuneDir, "tuning.for");
         File engTuneFile = new File(tuneDir, "tuning.eng");
 
@@ -91,15 +93,6 @@ public class CorpusPreparer {
 
         trainingCorpus = new ParallelCorpus(forTrainFile.getCanonicalPath(), engTrainFile.getCanonicalPath(), "training");
         tuningCorpus = new ParallelCorpus(forTuneFile.getCanonicalPath(), engTuneFile.getCanonicalPath(), "tuning");
-    }
-
-    private File makeNewDirectory(File location, String dirName) throws IOException {
-        File directory = new File(location, dirName);
-        boolean success = directory.mkdir();
-        if (!success) {
-            throw new IOException("Cannot create directory name: "+dirName+" at location: "+location.getCanonicalPath());
-        }
-        return directory;
     }
 
     public ParallelCorpus getTrainingCorpus() {

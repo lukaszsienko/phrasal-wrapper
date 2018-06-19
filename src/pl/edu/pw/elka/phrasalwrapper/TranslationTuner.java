@@ -35,7 +35,7 @@ public class TranslationTuner {
         Utilities.printMessage("Started tuning process...");
         Utilities.extractAndLoadKenLMLibrary(modelsPersistence);
 
-        File outputDirectory = Utilities.createDirectoryRemovingOldIfExisits(this.outputDirectoryPath);
+        File outputDirectory = Utilities.createDirectoryRemovingOldIfExists(this.outputDirectoryPath);
 
         String iniFilePath = buildPhrasalIniFile();
 
@@ -73,7 +73,7 @@ public class TranslationTuner {
 
         String tunerFinalWeightsFilePath = ModelFile.generateCanonicalPathToOneModelFile(modelsPersistence, ModelFile.TUNER_WEIGHTS);
         modelsPersistence.registerNewDetectedModelFile(ModelFile.TUNER_WEIGHTS, tunerFinalWeightsFilePath);
-        Utilities.printMessage("Finished tuning process...");
+        Utilities.printMessage("Finished tuning process.");
     }
 
     private String buildPhrasalIniFile() throws IOException {

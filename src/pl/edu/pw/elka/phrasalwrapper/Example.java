@@ -14,7 +14,7 @@ public class Example {
 
         final int EVERY_N_TH_GOES_TO_TUNING_SET = 14;
         CorpusPreparer corpusPreparer = new CorpusPreparer(foreignFilePath, englishFilePath);
-        corpusPreparer.splitCorpusIntoTrainAndTuneParts(EVERY_N_TH_GOES_TO_TUNING_SET);
+        corpusPreparer.splitCorpusIntoTrainAndTuneParts(EVERY_N_TH_GOES_TO_TUNING_SET, modelsPersistence);
         ParallelCorpus trainingCorpus = corpusPreparer.getTrainingCorpus();
         ParallelCorpus tuningCorpus = corpusPreparer.getTuningCorpus();
 

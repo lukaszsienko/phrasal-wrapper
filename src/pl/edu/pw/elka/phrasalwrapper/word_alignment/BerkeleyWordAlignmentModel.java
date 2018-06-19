@@ -32,7 +32,7 @@ public class BerkeleyWordAlignmentModel {
 
     public void runWordAlignmentProcess(String [] userArgs) throws IOException {
         Utilities.printMessage("Started word alignment using Berkeley Aligner...");
-        File outputDirectory = Utilities.createDirectoryRemovingOldIfExisits(this.outputFolderPath);
+        File outputDirectory = Utilities.createDirectoryRemovingOldIfExists(this.outputFolderPath);
 
         String [] defaultArgs = new String[48];
         defaultArgs[0] = "-Main.forwardModels";

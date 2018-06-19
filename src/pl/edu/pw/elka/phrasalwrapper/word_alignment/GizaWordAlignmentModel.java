@@ -27,7 +27,7 @@ public class GizaWordAlignmentModel {
 
     public void runWordAlignmentProcess() throws Exception {
         Utilities.printMessage("Started word alignment using GIZA++ aligner...");
-        File outputDirectory = Utilities.createDirectoryRemovingOldIfExisits(this.outputFolder);
+        File outputDirectory = Utilities.createDirectoryRemovingOldIfExists(this.outputFolder);
 
         File gizaSoftDir = extractGizaSoftware(outputDirectory.getCanonicalPath());
         File forToEngAlignmentDir = new File(outputDirectory, "align_for_eng");

@@ -16,7 +16,7 @@ public class Tokenizer {
 
     public static File tokenizeFile(File fileToTokenize) throws Exception {
         File tokenizeResultFile = tokenizeFileContents(fileToTokenize);
-        return replaceExisitngFileWithOtherFileInTheSameDirectory(fileToTokenize, tokenizeResultFile);
+        return replaceExistingFileWithOtherFileInTheSameDirectory(fileToTokenize, tokenizeResultFile);
     }
 
     private static File tokenizeFileContents(File inputFile) {
@@ -41,7 +41,7 @@ public class Tokenizer {
         return outputFile;
     }
 
-    private static File replaceExisitngFileWithOtherFileInTheSameDirectory(File existingFile, File newFile) throws Exception {
+    private static File replaceExistingFileWithOtherFileInTheSameDirectory(File existingFile, File newFile) throws Exception {
         String existingFileName = existingFile.getName();
         String existingFilePath = existingFile.getCanonicalPath();
 

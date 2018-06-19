@@ -28,7 +28,7 @@ public class LanguageModel {
 
     public void buildLanguageModel() throws Exception {
         Utilities.printMessage("Started building language model...");
-        Utilities.createDirectoryRemovingOldIfExisits(this.outputFolder);
+        Utilities.createDirectoryRemovingOldIfExists(this.outputFolder);
 
         File kenLMextractedLibrary = Utilities.extractAndLoadKenLMLibrary(modelsPersistence);
 

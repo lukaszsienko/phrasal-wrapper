@@ -22,7 +22,7 @@ public abstract class TranslationModel {
 
     public void buildTranslationModel() throws IOException {
         Utilities.printMessage("Started building translation model (phrase table and reordering model)...");
-        File outputDirectory = Utilities.createDirectoryRemovingOldIfExisits(this.outputModelFolder);
+        File outputDirectory = Utilities.createDirectoryRemovingOldIfExists(this.outputModelFolder);
 
         String[] phrase_extract_args = getPhraseExtractParameters(outputDirectory.getCanonicalPath());
 

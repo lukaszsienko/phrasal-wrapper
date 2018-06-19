@@ -29,14 +29,14 @@ public class Utilities {
         System.out.println("\n["+date+"] "+messageContent);
     }
 
-    public static File createDirectoryRemovingOldIfExisits(String pathToDirectory) throws IOException {
+    public static File createDirectoryRemovingOldIfExists(String pathToDirectory) throws IOException {
         File dir = new File(pathToDirectory);
         if (dir.exists()) {
             FileUtils.deleteDirectory(dir);
         }
         boolean dirCreated = dir.mkdir();
         if (!dirCreated) {
-            throw new IOException("Utilities.createDirectoryRemovingOldIfExisits: Cannot create output directory.");
+            throw new IOException("Utilities.createDirectoryRemovingOldIfExists: Cannot create output directory.");
         }
         return dir;
     }
@@ -138,26 +138,6 @@ public class Utilities {
                 Files.copy(pathToResourceInsideJar, outputFile.toPath());
             }
         }
-    }
-
-    public static void printBashProcessOutput(Process process) throws IOException {
-        BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-        BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-
-        // read the output from the command
-        System.out.println("Here is the standard output of the command:\n");
-        String s = null;
-        while ((s = stdInput.readLine()) != null) {
-            System.out.println(s);
-        }
-
-        // read any errors from the attempted command
-        System.out.println("Here is the standard error of the command (if any):\n");
-        while ((s = stdError.readLine()) != null) {
-            System.out.println(s);
-        }
-
-        System.err.println("Exit status=" + process.exitValue());
     }
 
     public static class ExitTrappedException extends SecurityException { }
