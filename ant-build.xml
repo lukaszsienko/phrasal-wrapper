@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="phrasal_wrapper" default="all">
+  
+  
+  <property file="ant-build.properties"/>
+  <!-- Uncomment the following property if no tests compilation is needed -->
+  <!-- 
+  <property name="skip.tests" value="true"/>
+   -->
+  
+  <!-- Compiler options -->
+  
+  <property name="compiler.debug" value="on"/>
+  <property name="compiler.generate.no.warnings" value="off"/>
+  <property name="compiler.args" value=""/>
+  <property name="compiler.max.memory" value="700m"/>
+  <patternset id="ignored.files">
+    <exclude name="**/*.hprof/**"/>
+    <exclude name="**/*.pyc/**"/>
+    <exclude name="**/*.pyo/**"/>
+    <exclude name="**/*.rbc/**"/>
+    <exclude name="**/*.yarb/**"/>
+    <exclude name="**/*~/**"/>
+    <exclude name="**/.DS_Store/**"/>
+    <exclude name="**/.git/**"/>
+    <exclude name="**/.hg/**"/>
+    <exclude name="**/.svn/**"/>
+    <exclude name="**/CVS/**"/>
+    <exclude name="**/__pycache__/**"/>
+    <exclude name="**/_svn/**"/>
+    <exclude name="**/vssver.scc/**"/>
+    <exclude name="**/vssver2.scc/**"/>
+  </patternset>
+  <patternset id="library.patterns">
+    <include name="*.egg"/>
+    <include name="*.jar"/>
+    <include name="*.ear"/>
+    <include name="*.swc"/>
+    <include name="*.war"/>
+    <include name="*.zip"/>
+    <include name="*.ane"/>
+  </patternset>
+  <patternset id="compiler.resources">
+    <exclude name="**/?*.java"/>
+    <exclude name="**/?*.form"/>
+    <exclude name="**/?*.class"/>
+    <exclude name="**/?*.groovy"/>
+    <exclude name="**/?*.scala"/>
+    <exclude name="**/?*.flex"/>
+    <exclude name="**/?*.kt"/>
+    <exclude name="**/?*.clj"/>
+    <exclude name="**/?*.aj"/>
+  </patternset>
+  
+  <!-- JDK definitions -->
+  
+  <property name="jdk.bin.1.8" value="${jdk.home.1.8}/bin"/>
+  <path id="jdk.classpath.1.8">
+    <fileset dir="${jdk.home.1.8}">
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/charsets.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/ext/cldrdata.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/ext/dnsns.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/ext/icedtea-sound.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/ext/jaccess.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/ext/localedata.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/ext/nashorn.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/ext/sunec.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/ext/sunjce_provider.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/ext/sunpkcs11.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/ext/zipfs.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/jce.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/jsse.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/management-agent.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/resources.jar"/>
+      <include name="../java-1.8.0-openjdk-amd64/jre/lib/rt.jar"/>
+    </fileset>
+  </path>
+  
+  <property name="project.jdk.home" value="${jdk.home.1.8}"/>
+  <property name="project.jdk.bin" value="${jdk.bin.1.8}"/>
+  <property name="project.jdk.classpath" value="jdk.classpath.1.8"/>
+  
+  
+  <!-- Project Libraries -->
+  
+  <path id="library.berkeleyaligner_2.1.classpath">
+    <pathelement location="${basedir}/lib/berkeleyaligner_2.1.jar"/>
+  </path>
+  
+  <path id="library.commons-io-2.6.classpath">
+    <pathelement location="${basedir}/lib/commons-io-2.6.jar"/>
+  </path>
+  
+  <path id="library.phrasal.classpath">
+    <pathelement location="${basedir}/lib/phrasal.jar"/>
+  </path>
+  
+  
+  <!-- Application Server Libraries -->
+  
+  <!-- Modules -->
+  
+  
+  <!-- Module CorpusTrainTuneSplitter -->
+  
+  <dirname property="module.corpustraintunesplitter.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.corpustraintunesplitter" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.corpustraintunesplitter" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.corpustraintunesplitter" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.corpustraintunesplitter" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="corpustraintunesplitter.output.dir" value="${module.corpustraintunesplitter.basedir}/out/production/CorpusTrainTuneSplitter"/>
+  <property name="corpustraintunesplitter.testoutput.dir" value="${module.corpustraintunesplitter.basedir}/out/test/CorpusTrainTuneSplitter"/>
+  
+  <path id="corpustraintunesplitter.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="corpustraintunesplitter.module.production.classpath">
+    <path refid="${module.jdk.classpath.corpustraintunesplitter}"/>
+  </path>
+  
+  <path id="corpustraintunesplitter.runtime.production.module.classpath">
+    <pathelement location="${corpustraintunesplitter.output.dir}"/>
+  </path>
+  
+  <path id="corpustraintunesplitter.module.classpath">
+    <path refid="${module.jdk.classpath.corpustraintunesplitter}"/>
+    <pathelement location="${corpustraintunesplitter.output.dir}"/>
+  </path>
+  
+  <path id="corpustraintunesplitter.runtime.module.classpath">
+    <pathelement location="${corpustraintunesplitter.testoutput.dir}"/>
+    <pathelement location="${corpustraintunesplitter.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.corpustraintunesplitter">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.corpustraintunesplitter">
+    <patternset refid="excluded.from.module.corpustraintunesplitter"/>
+  </patternset>
+  
+  <path id="corpustraintunesplitter.module.sourcepath">
+    <dirset dir="${module.corpustraintunesplitter.basedir}/CorpusTrainTuneSplitter">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.corpustraintunesplitter" depends="compile.module.corpustraintunesplitter.production,compile.module.corpustraintunesplitter.tests" description="Compile module CorpusTrainTuneSplitter"/>
+  
+  <target name="compile.module.corpustraintunesplitter.production" description="Compile module CorpusTrainTuneSplitter; production classes">
+    <mkdir dir="${corpustraintunesplitter.output.dir}"/>
+    <javac destdir="${corpustraintunesplitter.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.corpustraintunesplitter}/javac">
+      <compilerarg line="${compiler.args.corpustraintunesplitter}"/>
+      <bootclasspath refid="corpustraintunesplitter.module.bootclasspath"/>
+      <classpath refid="corpustraintunesplitter.module.production.classpath"/>
+      <src refid="corpustraintunesplitter.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.corpustraintunesplitter"/>
+    </javac>
+    
+    <copy todir="${corpustraintunesplitter.output.dir}">
+      <fileset dir="${module.corpustraintunesplitter.basedir}/CorpusTrainTuneSplitter/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.corpustraintunesplitter.tests" depends="compile.module.corpustraintunesplitter.production" description="compile module CorpusTrainTuneSplitter; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.corpustraintunesplitter" description="cleanup module">
+    <delete dir="${corpustraintunesplitter.output.dir}"/>
+    <delete dir="${corpustraintunesplitter.testoutput.dir}"/>
+  </target>
+  
+  
+  <!-- Module phrasal-wrapper -->
+  
+  <dirname property="module.phrasal-wrapper.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.phrasal-wrapper" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.phrasal-wrapper" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.phrasal-wrapper" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.phrasal-wrapper" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="phrasal-wrapper.output.dir" value="${module.phrasal-wrapper.basedir}/out/production/phrasal-wrapper"/>
+  <property name="phrasal-wrapper.testoutput.dir" value="${module.phrasal-wrapper.basedir}/out/test/phrasal-wrapper"/>
+  
+  <path id="phrasal-wrapper.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="phrasal-wrapper.module.production.classpath">
+    <path refid="${module.jdk.classpath.phrasal-wrapper}"/>
+    <path refid="library.phrasal.classpath"/>
+    <path refid="library.commons-io-2.6.classpath"/>
+    <path refid="library.berkeleyaligner_2.1.classpath"/>
+  </path>
+  
+  <path id="phrasal-wrapper.runtime.production.module.classpath">
+    <pathelement location="${phrasal-wrapper.output.dir}"/>
+    <path refid="library.phrasal.classpath"/>
+    <path refid="library.commons-io-2.6.classpath"/>
+    <path refid="library.berkeleyaligner_2.1.classpath"/>
+  </path>
+  
+  <path id="phrasal-wrapper.module.classpath">
+    <path refid="${module.jdk.classpath.phrasal-wrapper}"/>
+    <pathelement location="${phrasal-wrapper.output.dir}"/>
+    <path refid="library.phrasal.classpath"/>
+    <path refid="library.commons-io-2.6.classpath"/>
+    <path refid="library.berkeleyaligner_2.1.classpath"/>
+  </path>
+  
+  <path id="phrasal-wrapper.runtime.module.classpath">
+    <pathelement location="${phrasal-wrapper.testoutput.dir}"/>
+    <pathelement location="${phrasal-wrapper.output.dir}"/>
+    <path refid="library.phrasal.classpath"/>
+    <path refid="library.commons-io-2.6.classpath"/>
+    <path refid="library.berkeleyaligner_2.1.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.phrasal-wrapper">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.phrasal-wrapper">
+    <patternset refid="excluded.from.module.phrasal-wrapper"/>
+  </patternset>
+  
+  <path id="phrasal-wrapper.module.sourcepath">
+    <dirset dir="${module.phrasal-wrapper.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.phrasal-wrapper" depends="compile.module.phrasal-wrapper.production,compile.module.phrasal-wrapper.tests" description="Compile module phrasal-wrapper"/>
+  
+  <target name="compile.module.phrasal-wrapper.production" description="Compile module phrasal-wrapper; production classes">
+    <mkdir dir="${phrasal-wrapper.output.dir}"/>
+    <javac destdir="${phrasal-wrapper.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.phrasal-wrapper}/javac">
+      <compilerarg line="${compiler.args.phrasal-wrapper}"/>
+      <bootclasspath refid="phrasal-wrapper.module.bootclasspath"/>
+      <classpath refid="phrasal-wrapper.module.production.classpath"/>
+      <src refid="phrasal-wrapper.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.phrasal-wrapper"/>
+    </javac>
+    
+    <copy todir="${phrasal-wrapper.output.dir}">
+      <fileset dir="${module.phrasal-wrapper.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.phrasal-wrapper.tests" depends="compile.module.phrasal-wrapper.production" description="compile module phrasal-wrapper; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.phrasal-wrapper" description="cleanup module">
+    <delete dir="${phrasal-wrapper.output.dir}"/>
+    <delete dir="${phrasal-wrapper.testoutput.dir}"/>
+  </target>
+  
+  <target name="init" description="Build initialization">
+    <!-- Perform any build initialization in this target -->
+  </target>
+  
+  <target name="clean" depends="clean.module.corpustraintunesplitter, clean.module.phrasal-wrapper" description="cleanup all"/>
+  
+  <target name="build.modules" depends="init, clean, compile.module.corpustraintunesplitter, compile.module.phrasal-wrapper" description="build all modules"/>
+  
+  <target name="init.artifacts">
+    <property name="artifacts.temp.dir" value="${basedir}/__artifacts_temp"/>
+    <property name="artifact.output.phrasal-wrapper:jar" value="${basedir}/out/artifacts/phrasal_wrapper_jar"/>
+    <mkdir dir="${artifacts.temp.dir}"/>
+    <property name="temp.jar.path.phrasal-wrapper.jar" value="${artifacts.temp.dir}/phrasal-wrapper.jar"/>
+  </target>
+  
+  <target name="artifact.phrasal-wrapper:jar" depends="init.artifacts, compile.module.phrasal-wrapper" description="Build &#39;phrasal-wrapper:jar&#39; artifact">
+    <property name="artifact.temp.output.phrasal-wrapper:jar" value="${artifacts.temp.dir}/phrasal_wrapper_jar"/>
+    <mkdir dir="${artifact.temp.output.phrasal-wrapper:jar}"/>
+    <jar destfile="${temp.jar.path.phrasal-wrapper.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset dir="${phrasal-wrapper.output.dir}"/>
+      <zipfileset dir="${basedir}/kenLanguageModel" prefix="kenLanguageModel"/>
+      <zipfileset file="${basedir}/log4j2.xml"/>
+      <zipfileset src="${basedir}/lib/berkeleyaligner_2.1.jar"/>
+      <zipfileset src="${basedir}/lib/phrasal.jar"/>
+      <zipfileset dir="${basedir}/giza_software" prefix="giza_software"/>
+      <zipfileset src="${basedir}/lib/commons-io-2.6.jar"/>
+    </jar>
+    <copy file="${temp.jar.path.phrasal-wrapper.jar}" tofile="${artifact.temp.output.phrasal-wrapper:jar}/phrasal-wrapper.jar"/>
+  </target>
+  
+  <target name="build.all.artifacts" depends="artifact.phrasal-wrapper:jar" description="Build all artifacts">
+    <mkdir dir="${artifact.output.phrasal-wrapper:jar}"/>
+    <copy todir="${artifact.output.phrasal-wrapper:jar}">
+      <fileset dir="${artifact.temp.output.phrasal-wrapper:jar}"/>
+    </copy>
+    
+    <!-- Delete temporary files -->
+    <delete dir="${artifacts.temp.dir}"/>
+  </target>
+  
+  <target name="all" depends="build.modules, build.all.artifacts" description="build all"/>
+</project>
