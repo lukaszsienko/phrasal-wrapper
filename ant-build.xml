@@ -290,7 +290,7 @@
   <target name="artifact.phrasal-wrapper:jar" depends="init.artifacts, compile.module.phrasal-wrapper" description="Build &#39;phrasal-wrapper:jar&#39; artifact">
     <property name="artifact.temp.output.phrasal-wrapper:jar" value="${artifacts.temp.dir}/phrasal_wrapper_jar"/>
     <mkdir dir="${artifact.temp.output.phrasal-wrapper:jar}"/>
-    <jar destfile="${temp.jar.path.phrasal-wrapper.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+    <jar destfile="${temp.jar.path.phrasal-wrapper.jar}" duplicate="preserve" manifest="${basedir}/src/META-INF/MANIFEST.MF" filesetmanifest="mergewithoutmain">
       <zipfileset dir="${phrasal-wrapper.output.dir}"/>
       <zipfileset dir="${basedir}/kenLanguageModel" prefix="kenLanguageModel"/>
       <zipfileset file="${basedir}/log4j2.xml"/>
