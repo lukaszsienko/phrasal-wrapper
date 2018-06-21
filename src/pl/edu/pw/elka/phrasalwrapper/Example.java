@@ -43,7 +43,7 @@ public class Example {
         tuner.runTuning();
 
         Decoder decoder = new Decoder(modelsPersistence);
-        decoder.translateSentence("Ann has a cat");
+        decoder.translateSentence("Ania ma kota");
     }
 
     public static void main(String[] args) throws Exception {
