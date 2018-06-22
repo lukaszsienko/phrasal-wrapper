@@ -42,29 +42,12 @@ public class LanguageModel {
         lmplzExecutable.setExecutable(true);
         buildBinaryExecutable.setExecutable(true);
 
-        String langModelInputDataFilePath;
-        if (additionalModelDataFilePath.isEmpty()) {
-            langModelInputDataFilePath = baseModelDataFilePath;
-        } else {
-            String conbinedDataFilePath = lmplzExecutable.toPath().resolveSibling("model_input").toFile().getCanonicalPath();
-            String combine2FilesCommand = "cat "+baseModelDataFilePath+" "+additionalModelDataFilePath+" > "+conbinedDataFilePath;
-
-            String[] combine_files_cmd = {"/bin/sh","-c", combine2FilesCommand};
-            ProcessBuilder combine_files_proc_builder = new ProcessBuilder(Arrays.asList(combine_files_cmd));
-            combine_files_proc_builder.inheritIO();
-            Process combineInputData = combine_files_proc_builder.start();
-            combineInputData.waitFor();
-            if (combineInputData.exitValue() != 0) {
-                throw new Exception("Language model building exception, combine input data process did not return 0.");
-            }
-
-            langModelInputDataFilePath = conbinedDataFilePath;
-        }
+        String langModelInputDataFilePaths = additionalModelDataFilePath.isEmpty() ? baseModelDataFilePath : baseModelDataFilePath+" "+additionalModelDataFilePath;
 
         String outputArpaModelPath = ModelFile.generateCanonicalPathToOneModelFile(modelsPersistence, ModelFile.LANG_MODEL_ARPA);
         String outputBinModelPath = ModelFile.generateCanonicalPathToOneModelFile(modelsPersistence, ModelFile.LANG_MODEL_BIN);
 
-        String buildArpaModelCommand = lmplzExecutable.getCanonicalPath()+" -o " + ngram + " < " + langModelInputDataFilePath + " > "+outputArpaModelPath;
+        String buildArpaModelCommand = "cat "+langModelInputDataFilePaths+" | "+lmplzExecutable.getCanonicalPath()+" -o " + ngram + " > "+outputArpaModelPath;
         String buildBinModelCommand = buildBinaryExecutable.getCanonicalPath()+" trie "+outputArpaModelPath+" "+outputBinModelPath;
 
         String[] build_arpa_model_cmd = {"/bin/sh","-c", buildArpaModelCommand};
@@ -74,10 +57,6 @@ public class LanguageModel {
         buildTextModel.waitFor();
         if (buildTextModel.exitValue() != 0) {
             throw new Exception("Language model building exception, build command did not return 0.");
-        }
-
-        if (!additionalModelDataFilePath.isEmpty()) {
-            Files.delete(Paths.get(langModelInputDataFilePath));
         }
 
         String[] build_bin_model_cmd = {"/bin/sh","-c", buildBinModelCommand};
