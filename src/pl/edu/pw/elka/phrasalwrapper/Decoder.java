@@ -42,7 +42,7 @@ public class Decoder {
             loadDecodingModel();
         }
 
-        String input = Tokenizer.cleanText(sentenceToTranslate);
+        String input = Tokenizer.tokenizeAndCleanTextLine(sentenceToTranslate);
         InputStream inputStream = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();

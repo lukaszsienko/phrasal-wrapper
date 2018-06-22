@@ -53,8 +53,8 @@ public class CorpusPreparer {
                     (engCurrentLine = engIn.readLine()) != null) {
                 linenr++;
 
-                forCurrentLine = Tokenizer.cleanText(forCurrentLine);
-                engCurrentLine = Tokenizer.cleanText(engCurrentLine);
+                forCurrentLine = Tokenizer.tokenizeAndCleanTextLine(forCurrentLine);
+                engCurrentLine = Tokenizer.tokenizeAndCleanTextLine(engCurrentLine);
                 int forLineWordsNum = Tokenizer.getNumberOfTokens(forCurrentLine);
                 int engLineWordsNum = Tokenizer.getNumberOfTokens(engCurrentLine);
 

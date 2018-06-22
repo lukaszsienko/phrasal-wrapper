@@ -1,13 +1,17 @@
 package pl.edu.pw.elka.phrasalwrapper;
 
+import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.process.CoreLabelTokenFactory;
+import edu.stanford.nlp.process.PTBTokenizer;
+
 import java.io.*;
 
 public class Tokenizer {
 
     private Tokenizer() {}
 
-    public static String cleanText(String text) {
-        return text.toLowerCase().replaceAll("\\p{P}", " ").replaceAll(" +", " ").trim();
+    public static String tokenizeAndCleanTextLine(String text) {
+        return tokenizeUsingCoreNLP(text).toLowerCase().replaceAll("[^\\p{L}\\p{Nd}]+", " ").replaceAll(" +", " ").trim();
     }
 
     public static int getNumberOfTokens(String text) {
@@ -17,6 +21,20 @@ public class Tokenizer {
     public static File tokenizeFile(File fileToTokenize) throws Exception {
         File tokenizeResultFile = tokenizeFileContents(fileToTokenize);
         return replaceExistingFileWithOtherFileInTheSameDirectory(fileToTokenize, tokenizeResultFile);
+    }
+
+    private static String tokenizeUsingCoreNLP(String str) {
+        PTBTokenizer<CoreLabel> ptbt = new PTBTokenizer<>(new StringReader(str), new CoreLabelTokenFactory(), "normalizeParentheses=false,normalizeOtherBrackets=false");
+
+        StringBuilder sb = new StringBuilder();
+        while (ptbt.hasNext()) {
+            CoreLabel label = ptbt.next();
+            sb.append(label.toString());
+            if (ptbt.hasNext()) {
+                sb.append(" ");
+            }
+        }
+        return sb.toString();
     }
 
     private static File tokenizeFileContents(File inputFile) {
@@ -30,7 +48,7 @@ public class Tokenizer {
 
             String currentLine;
             while ((currentLine = in.readLine()) != null) {
-                currentLine = cleanText(currentLine);
+                currentLine = tokenizeAndCleanTextLine(currentLine);
                 out.write(currentLine+"\n");
             }
 
