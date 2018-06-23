@@ -24,7 +24,7 @@ public class Tokenizer {
     }
 
     private static String tokenizeUsingCoreNLP(String str) {
-        PTBTokenizer<CoreLabel> ptbt = new PTBTokenizer<>(new StringReader(str), new CoreLabelTokenFactory(), "normalizeParentheses=false,normalizeOtherBrackets=false");
+        PTBTokenizer<CoreLabel> ptbt = new PTBTokenizer<>(new StringReader(str), new CoreLabelTokenFactory(), "normalizeParentheses=false,normalizeOtherBrackets=false,untokenizable=noneDelete");
 
         StringBuilder sb = new StringBuilder();
         while (ptbt.hasNext()) {
